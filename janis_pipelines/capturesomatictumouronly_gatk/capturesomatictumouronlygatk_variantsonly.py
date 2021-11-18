@@ -73,7 +73,7 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
 
         self.step(
             "vc_gatk_merge",
-            BcfToolsConcat_1_9(vcf=self.vc_gatk.out.as_type(Array(Vcf))),
+            BcfToolsConcat_1_9(vcf=self.vc_gatk.variants.as_type(Array(Vcf))),
         )
         self.step(
             "vc_gatk_sort_combined",
@@ -111,14 +111,14 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_variants_gatk",
             source=self.vc_gatk_sort_combined.out,
-            output_folder="variants",
+            output_folder=["variants", "unfiltered"],
             doc="Merged variants from the GATK caller",
         )
 
         self.output(
             "out_variants_pass_gatk",
             source=self.filterpass.out,
-            output_folder=["variants", "pass"],
+            output_folder=["variants"],
             output_name=StringFormatter(
                 "{samplename}.gatk.recode.vcf", samplename=self.sample_name
             ),
