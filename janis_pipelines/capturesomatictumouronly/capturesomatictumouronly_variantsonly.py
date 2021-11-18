@@ -1,0 +1,215 @@
+from janis_core import Directory, StringFormatter
+from janis_bioinformatics.data_types import Bed, Vcf
+
+
+from janis_pipelines.capturesomatictumouronly_gatk.capturesomatictumouronlygatk_variantsonly import (
+    CaptureSomaticTumourOnlyGATKVariantsOnly,
+)
+
+from janis_bioinformatics.tools.variantcallers import (
+    VardictGermlineVariantCaller,
+    VarscanGermlineCNSVariantCaller,
+    IlluminaSomaticPiscesVariantCallerTumourOnlyTargeted_5_2_10_49,
+)
+
+from janis_bioinformatics.tools.pmac import (
+    CombineVariants_0_0_8,
+    AddBamStats_Germline_0_1_0,
+    GenerateVardictHeaderLines,
+)
+
+from janis_bioinformatics.tools.bcftools import BcfToolsSort_1_9
+
+from janis_unix.tools import UncompressArchive
+
+from janis_bioinformatics.tools.htslib import BGZipLatest, TabixLatest
+
+
+class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
+    CaptureSomaticTumourOnlyGATKVariantsOnly
+):
+    def id(self):
+        return "CaptureSomaticTumourOnlyMultiCallersVariantsOnly"
+
+    def friendly_name(self):
+        return "Capture Somatic Tumour Only (Multi callers) [VARIANTS only]"
+
+    def version(self):
+        return "1.4.0"
+
+    def constructor(self):
+        self.add_inputs()
+
+        self.add_gatk_variantcaller(bam_source=self.bam)
+        self.add_vardict(bam_source=self.bam)
+        self.add_varscan2(bam_source=self.bam)
+        self.add_pisces(bam_source=self.bam)
+
+        self.add_combine_variants(bam_source=self.bam)
+
+    def add_inputs_for_reference(self):
+        super().add_inputs_for_reference()
+        self.input("referenceFolder", Directory())
+
+    def add_inputs_for_intervals(self):
+        super().add_inputs_for_intervals()
+        self.input("intervals", Bed())
+
+    def add_vardict(self, bam_source):
+        self.step(
+            "generate_vardict_headerlines",
+            GenerateVardictHeaderLines(reference=self.reference),
+        )
+        self.step(
+            "vc_vardict",
+            VardictGermlineVariantCaller(
+                bam=bam_source,
+                samplename=self.sample_name,
+                intervals=self.intervals,
+                header_lines=self.generate_vardict_headerlines.out,
+                reference=self.reference,
+                allele_freq_threshold=self.minVaf,
+                minMappingQual=self.minMQ,
+            ),
+            scatter="intervals",
+        )
+
+        self.output(
+            "out_variants_vardict",
+            source=self.vc_vardict.out,
+            output_folder="variants",
+            output_name=StringFormatter(
+                "{samplename}.vardict.recode.vcf", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "variants_vardict",
+            source=self.vc_vardict.variants,
+            output_folder=["variants", "unfiltered"],
+            output_name=StringFormatter("{samplename}.vardict.vcf"),
+        )
+
+    def add_varscan2(self, bam_source):
+        self.step(
+            "vc_varscan2",
+            VarscanGermlineCNSVariantCaller(
+                sample_name=self.sample_name,
+                bam=bam_source,
+                reference=self.reference,
+                maxDepth=10000,
+                minBQ=self.minBQ,
+                minDepth=self.minDepth,
+                minVariantReads=self.minAD,
+                minVaf=self.minVaf,
+                pval=self.maxPval,
+            ),
+        )
+
+        self.output(
+            "out_variants_varscan2",
+            self.vc_varscan.out,
+            output_folder="variants",
+            output_name=StringFormatter("{samplename}.varscan.recode.vcf"),
+        )
+        self.output(
+            "variants_varscan2",
+            self.vc_varscan.variants,
+            output_folder=["variants", "unfiltered"],
+            output_name=StringFormatter(
+                "{samplename}.varscan.vcf", samplename=self.sample_name
+            ),
+        )
+
+    def add_pisces(self, bam_source):
+        self.step(
+            "vc_pisces",
+            IlluminaSomaticPiscesVariantCallerTumourOnlyTargeted_5_2_10_49(
+                bam=bam_source,
+                sample_name=self.sample_name,
+                referenceFolder=self.referenceFolder,
+                PON=self.panel_of_normals,
+                intervals=self.interval,
+                minBQ=self.minBQ,
+                VCminVQ=self.piscesVCminVQ,
+                VQRminVQ=self.piscesVQRminVQ,
+            ),
+        )
+
+        self.output(
+            "piscesBam",
+            source=self.vc_pisces.out_bam,
+            output_folder="Bam",
+            output_name=StringFormatter(
+                "{samplename}.pisces.bam", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "out_varaints_pisces",
+            source=self.vc_pisces.out,
+            output_folder="variants",
+            output_name=StringFormatter(
+                "{samplename}.pisces.recode.vcf", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "variants_pisces",
+            source=self.vc_pisces.variants,
+            output_folder=["variants", "unfiltered"],
+            output_name=StringFormatter("{samplename}.pisces.vcf"),
+        )
+
+    def add_inputs_for_intervals(self):
+        self.input("intervals", Bed())
+
+    def add_combine_variants(self, bam_source):
+        self.step(
+            "combine_variants",
+            CombineVariants_0_0_8(
+                vcfs=[
+                    self.vc_gatk_variantcaller.out_variants_pass_gatk,
+                    self.vc_pisces.out_variants_pisces,
+                    self.vc_varscan.out_variants_varscan,
+                    self.vc_vardict.out_variants_vardict,
+                ],
+                type="germline",
+                columns=["AC", "AN", "AF", "AD", "DP", "GT"],
+            ),
+        )
+
+        self.step(
+            "combined_sort", BcfToolsSort_1_9(vcf=self.combine_variants.out)
+        )
+
+        self.step(
+            "combined_uncompress",
+            UncompressArchive(file=self.combined_sort.out),
+        )
+
+        self.step(
+            "combined_addbamstats",
+            AddBamStats_Germline_0_1_0(
+                bam=bam_source,
+                vcf=self.combined_uncompress_out.as_type(Vcf),
+                reference=self.reference,
+            ),
+        )
+
+        self.step(
+            "compress_combined_addbamstats",
+            BGZipLatest(vcf=self.combined_addbamstat),
+        )
+
+        self.step(
+            "tabixvcf", TabixLatest(inp=self.compress_combined_addbamstats.out)
+        )
+
+        self.output(
+            "out_variants",
+            source=self.tabixvcf.out,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.combined", samplename=self.sample_name
+            ),
+            doc="Combined variants from all 4 variant callers",
+        )
+
