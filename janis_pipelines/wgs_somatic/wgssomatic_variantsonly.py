@@ -1,7 +1,10 @@
 from datetime import date
 
 from janis_bioinformatics.data_types import Bed, BedTabix, Vcf, CompressedVcf
-from janis_bioinformatics.tools.bcftools import BcfToolsSort_1_9, BcfToolsConcat_1_9
+from janis_bioinformatics.tools.bcftools import (
+    BcfToolsSort_1_9,
+    BcfToolsConcat_1_9,
+)
 from janis_bioinformatics.tools.common import GATKBaseRecalBQSRWorkflow_4_1_3
 from janis_bioinformatics.tools.htslib import BGZipLatest
 from janis_bioinformatics.tools.papenfuss import Gridss_2_6_2
@@ -12,7 +15,9 @@ from janis_bioinformatics.tools.pmac import (
     GenerateIntervalsByChromosome,
     GenerateMantaConfig,
 )
-from janis_bioinformatics.tools.variantcallers import GatkSomaticVariantCaller_4_1_3
+from janis_bioinformatics.tools.variantcallers import (
+    GatkSomaticVariantCaller_4_1_3,
+)
 from janis_bioinformatics.tools.variantcallers.illuminasomatic_strelka import (
     IlluminaSomaticVariantCaller,
 )
@@ -76,8 +81,12 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
     def add_inputs_for_intervals(self):
         super().add_inputs_for_intervals()
 
-        self.input("vardict_intervals", Array(Bed), doc=INPUT_DOCS["vardict_intervals"])
-        self.input("strelka_intervals", BedTabix, doc=INPUT_DOCS["strelka_intervals"])
+        self.input(
+            "vardict_intervals", Array(Bed), doc=INPUT_DOCS["vardict_intervals"]
+        )
+        self.input(
+            "strelka_intervals", BedTabix, doc=INPUT_DOCS["strelka_intervals"]
+        )
 
     def add_inputs_for_configuration(self):
         super().add_inputs_for_configuration()
@@ -118,10 +127,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_gridss_assembly",
             source=self.vc_gridss.assembly,
-            output_folder=[
-                "sv",
-                "gridss",
-            ],
+            output_folder=["sv", "gridss"],
             output_name=StringFormatter(
                 "{tumor_name}--{normal_name}_gridss",
                 tumor_name=self.tumor_name,
@@ -132,10 +138,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_variants_gridss",
             source=self.vc_gridss.out,
-            output_folder=[
-                "sv",
-                "gridss",
-            ],
+            output_folder=["sv", "gridss"],
             output_name=StringFormatter(
                 "{tumor_name}--{normal_name}_gridss",
                 tumor_name=self.tumor_name,
@@ -166,10 +169,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_facets_summary",
             source=self.vc_facets.out_summary,
-            output_folder=[
-                "cnv",
-                "facets",
-            ],
+            output_folder=["cnv", "facets"],
             output_name=StringFormatter(
                 "{tumour}--{normal}",
                 tumour=self.tumor_name,
@@ -179,12 +179,9 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_facets_purity_png",
             source=self.vc_facets.out_purity_png,
-            output_folder=[
-                "cnv",
-                "facets",
-            ],
+            output_folder=["cnv", "facets"],
             output_name=StringFormatter(
-                "{tumour}--{normal}_purity",
+                "{tumour}--{normafl}_purity",
                 tumour=self.tumor_name,
                 normal=self.normal_name,
             ),
@@ -192,10 +189,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_facets_purity_seg",
             source=self.vc_facets.out_purity_seg,
-            output_folder=[
-                "cnv",
-                "facets",
-            ],
+            output_folder=["cnv", "facets"],
             output_name=StringFormatter(
                 "{tumour}--{normal}_purity",
                 tumour=self.tumor_name,
@@ -205,10 +199,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_facets_purity_rds",
             source=self.vc_facets.out_purity_rds,
-            output_folder=[
-                "cnv",
-                "facets",
-            ],
+            output_folder=["cnv", "facets"],
             output_name=StringFormatter(
                 "{tumour}--{normal}_purity",
                 tumour=self.tumor_name,
@@ -218,10 +209,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_facets_hisens_png",
             source=self.vc_facets.out_hisens_png,
-            output_folder=[
-                "cnv",
-                "facets",
-            ],
+            output_folder=["cnv", "facets"],
             output_name=StringFormatter(
                 "{tumour}--{normal}_hisens",
                 tumour=self.tumor_name,
@@ -231,10 +219,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_facets_hisens_seg",
             source=self.vc_facets.out_hisens_seg,
-            output_folder=[
-                "cnv",
-                "facets",
-            ],
+            output_folder=["cnv", "facets"],
             output_name=StringFormatter(
                 "{tumour}--{normal}_hisens",
                 tumour=self.tumor_name,
@@ -244,10 +229,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_facets_hisens_rds",
             source=self.vc_facets.out_hisens_rds,
-            output_folder=[
-                "cnv",
-                "facets",
-            ],
+            output_folder=["cnv", "facets"],
             output_name=StringFormatter(
                 "{tumour}--{normal}_hisens",
                 tumour=self.tumor_name,
@@ -257,10 +239,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_facets_arm_level",
             source=self.vc_facets.out_arm_level,
-            output_folder=[
-                "cnv",
-                "facets",
-            ],
+            output_folder=["cnv", "facets"],
             output_name=StringFormatter(
                 "{tumour}--{normal}.arm_level",
                 tumour=self.tumor_name,
@@ -270,10 +249,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_facets_gene_level",
             source=self.vc_facets.out_gene_level,
-            output_folder=[
-                "cnv",
-                "facets",
-            ],
+            output_folder=["cnv", "facets"],
             output_name=StringFormatter(
                 "{tumour}--{normal}.gene_level",
                 tumour=self.tumor_name,
@@ -283,10 +259,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_facets_qc",
             source=self.vc_facets.out_qc,
-            output_folder=[
-                "cnv",
-                "facets",
-            ],
+            output_folder=["cnv", "facets"],
             output_name=StringFormatter(
                 "{tumour}--{normal}.qc",
                 tumour=self.tumor_name,
@@ -326,9 +299,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_variants_strelka",
             source=self.vc_strelka_compress.out.as_type(CompressedVcf),
-            output_folder=[
-                "variants",
-            ],
+            output_folder=["variants"],
             output_name=StringFormatter(
                 "{tumor_name}--{normal_name}_strelka",
                 tumor_name=self.tumor_name,
@@ -339,10 +310,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_variants_manta_somatic",
             source=self.vc_strelka.tumor_sv,
-            output_folder=[
-                "sv",
-                "manta",
-            ],
+            output_folder=["sv", "manta"],
             output_name=StringFormatter(
                 "{tumor_name}--{normal_name}_manta",
                 tumor_name=self.tumor_name,
@@ -378,7 +346,9 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         )
         self.step(
             "vc_vardict_sort_combined",
-            BcfToolsSort_1_9(vcf=self.vc_vardict_merge.out.as_type(CompressedVcf)),
+            BcfToolsSort_1_9(
+                vcf=self.vc_vardict_merge.out.as_type(CompressedVcf)
+            ),
         )
         self.step(
             "vc_vardict_uncompress_for_combine",
@@ -388,9 +358,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_variants_vardict",
             source=self.vc_vardict_sort_combined.out,
-            output_folder=[
-                "variants",
-            ],
+            output_folder=["variants"],
             output_name=StringFormatter(
                 "{tumor_name}--{normal_name}_vardict",
                 tumor_name=self.tumor_name,
@@ -401,10 +369,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_variants_vardict_split",
             source=self.vc_vardict.out,
-            output_folder=[
-                "variants",
-                "VardictByInterval",
-            ],
+            output_folder=["variants", "VardictByInterval"],
             doc="Unmerged variants from the GATK caller (by interval)",
         )
 
@@ -424,12 +389,19 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
             ),
         )
 
-        self.step("combined_compress", BGZipLatest(file=self.combine_variants.out))
+        self.step(
+            "combined_compress", BGZipLatest(file=self.combine_variants.out)
+        )
         self.step(
             "combined_sort",
-            BcfToolsSort_1_9(vcf=self.combined_compress.out.as_type(CompressedVcf)),
+            BcfToolsSort_1_9(
+                vcf=self.combined_compress.out.as_type(CompressedVcf)
+            ),
         )
-        self.step("combined_uncompress", UncompressArchive(file=self.combined_sort.out))
+        self.step(
+            "combined_uncompress",
+            UncompressArchive(file=self.combined_sort.out),
+        )
 
         self.step(
             "combined_addbamstats",
@@ -446,9 +418,7 @@ class WGSSomaticMultiCallersVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.output(
             "out_variants",
             source=self.combined_addbamstats.out,
-            output_folder=[
-                "variants",
-            ],
+            output_folder=["variants"],
             output_name=StringFormatter(
                 "{tumor_name}--{normal_name}_combined",
                 tumor_name=self.tumor_name,
