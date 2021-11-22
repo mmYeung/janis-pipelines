@@ -1,12 +1,7 @@
 from datetime import date
 
 from janis_unix.tools import UncompressArchive
-from janis_core import (
-    String,
-    Array,
-    WorkflowMetadata,
-    InputQualityType,
-)
+from janis_core import String, Array, WorkflowMetadata, InputQualityType
 from janis_core.operators.standard import FirstOperator
 
 from janis_bioinformatics.data_types import (
@@ -17,14 +12,21 @@ from janis_bioinformatics.data_types import (
     CompressedVcf,
     Vcf,
 )
-from janis_bioinformatics.tools.bcftools import BcfToolsSort_1_9, BcfToolsConcat_1_9
-from janis_bioinformatics.tools.bioinformaticstoolbase import BioinformaticsWorkflow
+from janis_bioinformatics.tools.bcftools import (
+    BcfToolsSort_1_9,
+    BcfToolsConcat_1_9,
+)
+from janis_bioinformatics.tools.bioinformaticstoolbase import (
+    BioinformaticsWorkflow,
+)
 from janis_bioinformatics.tools.common import GATKBaseRecalBQSRWorkflow_4_1_3
 from janis_bioinformatics.tools.pmac import (
     AddBamStatsSomatic_0_1_0,
     GenerateIntervalsByChromosome,
 )
-from janis_bioinformatics.tools.variantcallers import GatkSomaticVariantCaller_4_1_3
+from janis_bioinformatics.tools.variantcallers import (
+    GatkSomaticVariantCaller_4_1_3,
+)
 
 from janis_pipelines.reference import WGS_INPUTS
 
@@ -113,7 +115,9 @@ class WGSSomaticGATKVariantsOnly(BioinformaticsWorkflow):
         )
 
     def add_inputs_for_intervals(self):
-        self.input("gatk_intervals", Array(Bed), doc=INPUT_DOCS["gatk_intervals"])
+        self.input(
+            "gatk_intervals", Array(Bed), doc=INPUT_DOCS["gatk_intervals"]
+        )
         self.input("gridss_blacklist", Bed, doc=INPUT_DOCS["gridss_blacklist"])
 
     def add_inputs_for_reference(self):
