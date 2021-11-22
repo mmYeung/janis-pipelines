@@ -23,3 +23,8 @@ from janis_pipelines.wgs_somatic_gatk.wgssomaticgatk import (
 from janis_pipelines.capturesomatictumouronly_gatk.capturesomatictumouronlygatk_variantsonly import (
     CaptureSomaticTumourOnlyGATKVariantsOnly,
 )
+
+from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly import (
+    CaptureSomaticTumourOnly,
+    CaptureSomaticTumourOnlyMultiCallersVariantsOnly,
+)
