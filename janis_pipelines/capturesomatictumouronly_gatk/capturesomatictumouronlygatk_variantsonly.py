@@ -32,10 +32,13 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
     def version(self):
         return "1.4.0"
 
+    def add_inputs_for_intervals(self):
+        self.input("intervals", Bed())
+
     def add_inputs(self):
         self.input("bam", BamBai())
         self.input("sample_name", String())
-        self.input("intervals", Bed())
+
         self.add_inputs_for_configuration()
         self.add_inputs_for_intervals()
         self.add_inputs_for_reference()
