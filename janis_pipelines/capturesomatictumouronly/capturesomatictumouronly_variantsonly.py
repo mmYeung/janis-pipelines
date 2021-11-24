@@ -12,6 +12,8 @@ from janis_bioinformatics.tools.variantcallers import (
     IlluminaSomaticPiscesVariantCallerTumourOnlyTargeted_5_2_10_49,
 )
 
+from janis_bioinformatics.tools.dawson import GenerateChromosomeIntervalsFromBed
+
 from janis_bioinformatics.tools.pmac import (
     CombineVariants_0_0_8,
     AddBamStatsGermline_0_1_0,
@@ -40,7 +42,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
     def constructor(self):
         self.add_inputs()
 
-        self.add_gatk_variantcaller(bam_source=self.bam)
+        self.add_gatk_variantcaller(tumour_bam_source=self.bam)
         self.add_vardict(bam_source=self.bam)
         self.add_varscan2(bam_source=self.bam)
         self.add_pisces(bam_source=self.bam)
@@ -72,7 +74,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
         self.input("piscesVQRminVQ", Int())
 
     def add_inputs(self):
-        super.add_inputs()
+        super().add_inputs()
         self.add_inputs_for_vc()
 
     def add_vardict(self, bam_source):
@@ -80,12 +82,20 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             "generate_vardict_headerlines",
             GenerateVardictHeaderLines(reference=self.reference),
         )
+
+        self.step(
+            "generate_bed_chrom_split",
+            GenerateChromosomeIntervalsFromBed(
+                prefix="chr", referenceBed=self.intervals
+            ),
+        )
+
         self.step(
             "vc_vardict",
             VardictGermlineVariantCaller(
                 bam=bam_source,
                 samplename=self.sample_name,
-                intervals=self.intervals,
+                intervals=self.generate_bed_chrom_split.out_regions,
                 header_lines=self.generate_vardict_headerlines.out,
                 reference=self.reference,
                 allele_freq_threshold=self.minVaf,
