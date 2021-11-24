@@ -1,4 +1,4 @@
-from janis_core import Directory, StringFormatter
+from janis_core import Int, Float, Directory, StringFormatter
 from janis_bioinformatics.data_types import Bed, Vcf
 
 
@@ -14,7 +14,7 @@ from janis_bioinformatics.tools.variantcallers import (
 
 from janis_bioinformatics.tools.pmac import (
     CombineVariants_0_0_8,
-    AddBamStats_Germline_0_1_0,
+    AddBamStatsGermline_0_1_0,
     GenerateVardictHeaderLines,
 )
 
@@ -54,6 +54,26 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
     def add_inputs_for_intervals(self):
         super().add_inputs_for_intervals()
         self.input("intervals", Bed())
+
+    def add_inputs_for_vc(self):
+        # Generate
+        self.input("minVaf", Float())
+        self.input("minMQ", Int())
+        self.input("minAD", Int())
+        self.input("minDP", Int())
+        self.input("minBQ", Int())
+        # Varscan2
+        self.input("pileupMaxDepth", Int(), default=20000)
+        self.input("pileupMinBQ", Int())
+        self.input("varscanPval", Float(), default=0.0001)
+
+        # Pisces
+        self.input("piscesVCminVQ", Int())
+        self.input("piscesVQRminVQ", Int())
+
+    def add_inputs(self):
+        super.add_inputs()
+        self.add_inputs_for_vc()
 
     def add_vardict(self, bam_source):
         self.step(
@@ -96,12 +116,12 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 sample_name=self.sample_name,
                 bam=bam_source,
                 reference=self.reference,
-                maxDepth=10000,
+                maxDepth=self.pileupMaxDepth,
                 minBQ=self.minBQ,
-                minDepth=self.minDepth,
+                minDepth=self.minDP,
                 minVariantReads=self.minAD,
                 minVaf=self.minVaf,
-                pval=self.maxPval,
+                pval=self.varscanPval,
             ),
         )
 
@@ -187,7 +207,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
 
         self.step(
             "combined_addbamstats",
-            AddBamStats_Germline_0_1_0(
+            AddBamStatsGermline_0_1_0(
                 bam=bam_source,
                 vcf=self.combined_uncompress_out.as_type(Vcf),
                 reference=self.reference,
