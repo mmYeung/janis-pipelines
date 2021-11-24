@@ -1,5 +1,5 @@
 from typing import Optional, List
-from janis_core import String, Array, InputDocumentation
+from janis_core import String, Array, File, InputDocumentation
 
 from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 
@@ -43,6 +43,19 @@ class CaptureSomaticTumourOnly(
 
         self.add_preprocessing()
 
+        # self.step(
+        #     "callers",
+        #     CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
+        #         bam=self.add_preprocessing.out_bam,
+        #         referenceFolder=self.referenceFolder,
+        #     ),
+        # )
+
+    def add_inputs(self):
+        super.add_inputs()
+        self.input("reads", Array(FastqGzPair))
+        self.input("referenceAlt", File())
+
     def add_preprocessing(self):
 
         sub_inputs = {
@@ -72,6 +85,16 @@ class CaptureSomaticTumourOnly(
         )
 
         self.output("out_bam", source=self.merge_and_mark.out)
-        self.output("umimetrics", source=self.merge_and_mark.umimetrics)
-        self.output("metrics", source=self.merge_and_mark.metrics)
+        self.output(
+            "umimetrics",
+            source=self.merge_and_mark.umimetrics,
+            output_folder=["stats"],
+            output_name=self.sample_name + "umimetrics.txt",
+        )
+        self.output(
+            "metrics",
+            source=self.merge_and_mark.metrics,
+            output_folder=["stats"],
+            output_name=self.sample_name + "metrics.txt",
+        )
         self.output("out_fastqc_reports", source=self.fastqc.out)
