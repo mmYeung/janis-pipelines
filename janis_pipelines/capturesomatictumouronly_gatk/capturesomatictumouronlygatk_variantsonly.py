@@ -7,6 +7,8 @@ from janis_pipelines.wgs_somatic_gatk.wgssomaticgatk_variantsonly import (
     WGSSomaticGATKVariantsOnly,
 )
 
+from janis_bioinformatics.tools.dawson import GenerateChromosomeIntervalsFromBed
+
 from janis_bioinformatics.tools.common.gatkbasecalbam import (
     GATKBaseRecalBQSRWorkflow_4_1_3,
 )
@@ -46,10 +48,16 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
     def add_gatk_variantcaller(self, tumour_bam_source):
 
         # intervals = FirstOperator([self.gatk_intervals, generated_intervals])
+        self.step(
+            "generate_bed_chrom_split",
+            GenerateChromosomeIntervalsFromBed(
+                prefix="chr", referenceBed=self.intervals
+            ),
+        )
 
         recal_ins = {
             "reference": self.reference,
-            "intervals": self.intervals,
+            "intervals": self.generate_bed_chrom_split.out_regions,
             "snps_dbsnp": self.snps_dbsnp,
             "snps_1000gp": self.snps_1000gp,
             "known_indels": self.known_indels,
@@ -66,7 +74,7 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
             "vc_gatk",
             GatkSomaticVariantCallerTumorOnlyTargeted(
                 bam=self.bqsr_tumour.out,
-                intervals=self.intervals,
+                intervals=self.generate_bed_chrom_split.out_regions,
                 reference=self.reference,
                 gnomad=self.gnomad,
                 panel_of_normals=self.panel_of_normals,
@@ -94,9 +102,9 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
         )
 
         self.step(
-            "filterpass",
+            "vc_gatk_filterpass",
             VcfToolsvcftools_0_1_16(
-                vcf=self.uncompress.out.as_type(Vcf),
+                vcf=self.vc_gatk_uncompressvcf.out.as_type(Vcf),
                 removeFileteredAll=True,
                 recode=True,
                 recodeINFOAll=True,
