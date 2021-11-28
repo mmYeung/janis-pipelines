@@ -12,7 +12,9 @@ from janis_bioinformatics.tools.bwakit import BwaPostAltAligner
 from janis_bioinformatics.tools.common import MergeAndMarkBamsUMI_4_1_2
 
 
-from janis_pipelines import CaptureSomaticTumourOnlyMultiCallersVariantsOnly
+from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly_variantsonly import (
+    CaptureSomaticTumourOnlyMultiCallersVariantsOnly,
+)
 
 
 class CaptureSomaticTumourOnly(
@@ -30,7 +32,7 @@ class CaptureSomaticTumourOnly(
     def constructor(self):
         self.add_inputs()
 
-        self.step("fastqc", FastQC_0_11_8(reads=self.reads, scatter="reads"))
+        self.step("fastqc", FastQC_0_11_8(reads=self.reads), scatter="reads")
 
         self.step(
             "getfastqc_adapters",
@@ -52,9 +54,11 @@ class CaptureSomaticTumourOnly(
         # )
 
     def add_inputs(self):
-        super.add_inputs()
+        super().add_inputs()
         self.input("reads", Array(FastqGzPair))
         self.input("referenceAlt", File())
+        # For CutAdapt
+        self.input("cutadapt_adapters", File(optional=True))
 
     def add_preprocessing(self):
 
@@ -62,18 +66,18 @@ class CaptureSomaticTumourOnly(
             "reference": self.reference,
             "referenceAlt": self.referenceAlt,
             "cutadapt_adapter": self.getfastqc_adapters,
-            "cutadapt_removeMiddleAdapter": self.getfastqc_adapters,
+            "cutadapt_removeMiddle3Adapter": self.getfastqc_adapters,
         }
 
         self.step(
             "alignUMI",
             BwaPostAltAligner(
-                fastqs=self.reads, sample_name=self.sample_name, **sub_inputs
+                fastq=self.reads, sample_name=self.sample_name, **sub_inputs
             ),
             scatter=[
-                "fastqs",
+                "fastq",
                 "cutadapt_adapter",
-                "cutadapt_removeMiddleAdapter",
+                "cutadapt_removeMiddle3Adapter",
             ],
         )
 
