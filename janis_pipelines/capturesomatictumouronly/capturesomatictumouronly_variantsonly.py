@@ -197,7 +197,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 vcfs=[
                     self.vc_gatk_filterpass.out,
                     self.vc_pisces.out,
-                    self.vc_varscan.out,
+                    self.vc_varscan2.out,
                     self.vc_vardict.out,
                 ],
                 type="germline",
@@ -225,7 +225,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
 
         self.step(
             "compress_combined_addbamstats",
-            BGZipLatest(vcf=self.combined_addbamstat),
+            BGZipLatest(file=self.combined_addbamstats),
         )
 
         self.step(
