@@ -54,11 +54,15 @@ class CaptureSomaticTumourOnly(
         # )
 
     def add_inputs(self):
-        super().add_inputs()
         self.input("reads", Array(FastqGzPair))
+        self.input("sample_name", String())
         self.input("referenceAlt", File())
         # For CutAdapt
         self.input("cutadapt_adapters", File(optional=True))
+        self.add_inputs_for_reference()
+        self.add_inputs_for_configuration()
+        self.add_inputs_for_intervals()
+        self.add_inputs_for_vc()
 
     def add_preprocessing(self):
 
