@@ -84,17 +84,10 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
         )
 
         self.step(
-            "generate_bed_chrom_split",
-            GenerateChromosomeIntervalsFromBed(
-                prefix="chr", referenceBed=self.intervals
-            ),
-        )
-
-        self.step(
             "vc_vardict",
             VardictGermlineVariantCaller(
                 bam=bam_source,
-                samplename=self.sample_name,
+                sample_name=self.sample_name,
                 intervals=self.generate_bed_chrom_split.out_regions,
                 header_lines=self.generate_vardict_headerlines.out,
                 reference=self.reference,
@@ -116,7 +109,9 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             "variants_vardict",
             source=self.vc_vardict.variants,
             output_folder=["variants", "unfiltered"],
-            output_name=StringFormatter("{samplename}.vardict.vcf"),
+            output_name=StringFormatter(
+                "{samplename}.vardict.vcf", samplename=self.sample_name
+            ),
         )
 
     def add_varscan2(self, bam_source):
@@ -128,8 +123,8 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 reference=self.reference,
                 maxDepth=self.pileupMaxDepth,
                 minBQ=self.minBQ,
-                minDepth=self.minDP,
-                minVariantReads=self.minAD,
+                minDP=self.minDP,
+                minAD=self.minAD,
                 minVaf=self.minVaf,
                 pval=self.varscanPval,
             ),
@@ -137,13 +132,15 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
 
         self.output(
             "out_variants_varscan2",
-            self.vc_varscan.out,
+            source=self.vc_varscan2.out,
             output_folder="variants",
-            output_name=StringFormatter("{samplename}.varscan.recode.vcf"),
+            output_name=StringFormatter(
+                "{samplename}.varscan.recode.vcf", samplename=self.sample_name
+            ),
         )
         self.output(
             "variants_varscan2",
-            self.vc_varscan.variants,
+            source=self.vc_varscan2.variants,
             output_folder=["variants", "unfiltered"],
             output_name=StringFormatter(
                 "{samplename}.varscan.vcf", samplename=self.sample_name
@@ -158,7 +155,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 sample_name=self.sample_name,
                 referenceFolder=self.referenceFolder,
                 PON=self.panel_of_normals,
-                intervals=self.interval,
+                intervals=self.intervals,
                 minBQ=self.minBQ,
                 VCminVQ=self.piscesVCminVQ,
                 VQRminVQ=self.piscesVQRminVQ,
@@ -185,7 +182,9 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             "variants_pisces",
             source=self.vc_pisces.variants,
             output_folder=["variants", "unfiltered"],
-            output_name=StringFormatter("{samplename}.pisces.vcf"),
+            output_name=StringFormatter(
+                "{samplename}.pisces.vcf", samplename=self.sample_name
+            ),
         )
 
     def add_inputs_for_intervals(self):
@@ -196,10 +195,10 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             "combine_variants",
             CombineVariants_0_0_8(
                 vcfs=[
-                    self.vc_gatk_variantcaller.out_variants_pass_gatk,
-                    self.vc_pisces.out_variants_pisces,
-                    self.vc_varscan.out_variants_varscan,
-                    self.vc_vardict.out_variants_vardict,
+                    self.vc_gatk_filterpass.out,
+                    self.vc_pisces.out,
+                    self.vc_varscan.out,
+                    self.vc_vardict.out,
                 ],
                 type="germline",
                 columns=["AC", "AN", "AF", "AD", "DP", "GT"],
@@ -219,7 +218,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             "combined_addbamstats",
             AddBamStatsGermline_0_1_0(
                 bam=bam_source,
-                vcf=self.combined_uncompress_out.as_type(Vcf),
+                vcf=self.combined_uncompress.out.as_type(Vcf),
                 reference=self.reference,
             ),
         )
