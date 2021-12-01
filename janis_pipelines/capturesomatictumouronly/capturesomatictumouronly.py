@@ -76,7 +76,10 @@ class CaptureSomaticTumourOnly(
         self.step(
             "alignUMI",
             BwaPostAltAligner(
-                fastq=self.reads, sample_name=self.sample_name, **sub_inputs
+                fastq=self.reads,
+                sample_name=self.sample_name,
+                addUMIs=True,
+                **sub_inputs,
             ),
             scatter=[
                 "fastq",
