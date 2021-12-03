@@ -87,7 +87,7 @@ class CaptureSomaticTumourOnly(
                 "cutadapt_removeMiddle3Adapter",
             ],
         )
-
+        # Need to change this to Non-UMI markdups
         self.step(
             "merge_and_mark",
             MergeAndMarkBamsUMI_4_1_2(
