@@ -19,9 +19,7 @@ from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly_variantso
 )
 
 
-class CaptureSomaticTumourOnlyUMI(
-    CaptureSomaticTumourOnlyMultiCallersVariantsOnly
-):
+class CaptureSomaticTumourOnlyUMI(CaptureSomaticTumourOnlyMultiCallersVariantsOnly):
     def id(self):
         return "CaptureSomaticTumourOnlyUMI"
 
@@ -41,13 +39,12 @@ class CaptureSomaticTumourOnlyUMI(
                 read2=self.reads[1],
                 outdir="/tmp",
                 library=self.agentlibrary,
+                agentVersion="2.0.2",
             ),
             scatter=["read1", "read2"],
         )
 
-        self.step(
-            "fastqc", FastQC_0_11_8(reads=self.agenttrim.out), scatter="reads"
-        )
+        self.step("fastqc", FastQC_0_11_8(reads=self.agenttrim.out), scatter="reads")
 
         self.step(
             "getfastqc_adapters",
