@@ -37,8 +37,8 @@ class CaptureSomaticTumourOnlyUMI(
         self.step(
             "agenttrim",
             AgentTrimmer_2_0_2(
-                read1=self.reads[0][0],
-                read2=self.reads[0][1],
+                read1=self.reads[0],
+                read2=self.reads[1],
                 outdir=".",
                 library=self.agentlibrary,
                 agentVersion="2.0.2",
