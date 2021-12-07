@@ -78,6 +78,7 @@ class CaptureSomaticTumourOnlyUMI(
         self.add_inputs_for_intervals()
         self.add_inputs_for_vc()
 
+    @staticmethod
     def umi_trimmer_subworkflow(**connections):
         w = WorkflowBuilder("umi_trimmer_subworkflow")
 
@@ -89,7 +90,7 @@ class CaptureSomaticTumourOnlyUMI(
             "agenttrimsub",
             AgentTrimmer_2_0_2(
                 read1=w.fastqPair[0],
-                read2=w.fastqPair[0],
+                read2=w.fastqPair[1],
                 outdir=".",
                 library=w.agentlibrary,
                 agentVersion="2.0.2",
