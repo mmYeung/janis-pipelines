@@ -1,5 +1,6 @@
 from typing import Optional, List
-from janis_core import String, Array, File, InputDocumentation
+from janis_bioinformatics.data_types.fastq import FastqPair
+from janis_core import String, Array, File, WorkflowBuilder
 
 from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 
@@ -12,7 +13,6 @@ from janis_bioinformatics.tools.pmac import ParseFastqcAdaptors
 from janis_bioinformatics.tools.bwakit import BwaPostAltAlignerUMI
 
 from janis_bioinformatics.tools.common import MergeAndMarkBamsUMI_4_1_2
-
 
 from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly_variantsonly import (
     CaptureSomaticTumourOnlyMultiCallersVariantsOnly,
@@ -36,14 +36,10 @@ class CaptureSomaticTumourOnlyUMI(
 
         self.step(
             "agenttrim",
-            AgentTrimmer_2_0_2(
-                read1=self.reads[0],
-                read2=self.reads[1],
-                outdir=".",
-                library=self.agentlibrary,
-                agentVersion="2.0.2",
+            self.umi_trimmer_subworkflow(
+                FastqPair=self.reads, agentlibrary=self.agentlibrary
             ),
-            scatter=["read1", "read2"],
+            scatter=["FastqPair"],
         )
 
         self.step(
@@ -73,7 +69,7 @@ class CaptureSomaticTumourOnlyUMI(
         self.input("reads", Array(FastqGzPair))
         self.input("sample_name", String())
         self.input("referenceAlt", File())
-        # For Agent Trimme
+        # For Agent Trimmer
         self.input("agentlibrary", String())
         # For CutAdapt
         self.input("cutadapt_adapters", File(optional=True))
@@ -81,6 +77,24 @@ class CaptureSomaticTumourOnlyUMI(
         self.add_inputs_for_configuration()
         self.add_inputs_for_intervals()
         self.add_inputs_for_vc()
+
+    def umi_trimmer_subworkflow(**connections):
+        w = WorkflowBuilder("umi_trimmer_subworkflow")
+
+        ## Inputs
+        w.inputs("fastqPair", FastqGzPair)
+        w.inputs("agentlibrary", String)
+
+        w.step(
+            "agenttrimsub",
+            AgentTrimmer_2_0_2(
+                read1=w.fastqPair[0],
+                read2=w.fastqPair[0],
+                outdir=".",
+                library=w.agentlibrary,
+                agentVersion="2.0.2",
+            ),
+        )
 
     def add_preprocessing(self):
 
