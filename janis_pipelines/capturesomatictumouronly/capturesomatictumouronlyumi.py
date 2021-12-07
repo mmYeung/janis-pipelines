@@ -82,8 +82,8 @@ class CaptureSomaticTumourOnlyUMI(
         w = WorkflowBuilder("umi_trimmer_subworkflow")
 
         ## Inputs
-        w.inputs("fastqPair", FastqGzPair)
-        w.inputs("agentlibrary", String)
+        w.input("fastqPair", FastqGzPair)
+        w.input("agentlibrary", String)
 
         w.step(
             "agenttrimsub",
