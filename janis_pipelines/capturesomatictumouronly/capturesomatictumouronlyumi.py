@@ -37,9 +37,9 @@ class CaptureSomaticTumourOnlyUMI(
         self.step(
             "agenttrim",
             self.umi_trimmer_subworkflow(
-                FastqPair=self.reads, agentlibrary=self.agentlibrary
+                fastqPair=self.reads, agentlibrary=self.agentlibrary
             ),
-            scatter=["FastqPair"],
+            scatter=["fastqPair"],
         )
 
         self.step(
@@ -96,6 +96,10 @@ class CaptureSomaticTumourOnlyUMI(
                 agentVersion="2.0.2",
             ),
         )
+
+        w.output("out", source=w.agenttrimsub.out)
+
+        return w(**connections)
 
     def add_preprocessing(self):
 
