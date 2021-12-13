@@ -60,7 +60,9 @@ class CaptureSomaticTumourOnlyUMI(
         self.step(
             "callers",
             CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
-                bam=self.add_preprocessing.out_bam,
+                bam=self.out_bam,
+                sample_name=self.sample_name,
+                reference=self.reference,
                 referenceFolder=self.referenceFolder,
                 intervals=self.intervals,
                 minVaf=self.minVaf,
@@ -73,7 +75,7 @@ class CaptureSomaticTumourOnlyUMI(
                 varscanPval=self.varscanPval,
                 piscesVCminVQ=self.piscesVCminVQ,
                 piscesVQRminVQ=self.piscesVQRminVQ,
-                snps_dbsnps=self.snps_dbsnps,
+                snps_dbsnp=self.snps_dbsnp,
                 snps_1000gp=self.snps_1000gp,
                 known_indels=self.known_indels,
                 mills_indels=self.mills_indels,
