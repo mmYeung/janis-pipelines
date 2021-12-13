@@ -58,7 +58,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
         self.input("intervals", Bed())
 
     def add_inputs_for_vc(self):
-        # Generate
+        # General parameters
         self.input("minVaf", Float())
         self.input("minMQ", Int())
         self.input("minAD", Int())
