@@ -57,13 +57,30 @@ class CaptureSomaticTumourOnlyUMI(
 
         self.add_preprocessing()
 
-        # self.step(
-        #     "callers",
-        #     CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
-        #         bam=self.add_preprocessing.out_bam,
-        #         referenceFolder=self.referenceFolder,
-        #     ),
-        # )
+        self.step(
+            "callers",
+            CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
+                bam=self.add_preprocessing.out_bam,
+                referenceFolder=self.referenceFolder,
+                intervals=self.intervals,
+                minVaf=self.minVaf,
+                minMQ=self.minMQ,
+                minAD=self.minAD,
+                minDP=self.minDP,
+                minBQ=self.minBQ,
+                pileupMaxDepth=self.pileupMaxDepth,
+                pileupMinBQ=self.pileupMinBQ,
+                varscanPval=self.varscanPval,
+                piscesVCminVQ=self.piscesVCminVQ,
+                piscesVQRminVQ=self.piscesVQRminVQ,
+                snps_dbsnps=self.snps_dbsnps,
+                snps_1000gp=self.snps_1000gp,
+                known_indels=self.known_indels,
+                mills_indels=self.mills_indels,
+                gnomad=self.gnomad,
+                panel_of_normals=self.panel_of_normals,
+            ),
+        )
 
     def add_inputs(self):
         self.input("reads", Array(FastqGzPair))
@@ -83,8 +100,8 @@ class CaptureSomaticTumourOnlyUMI(
         w = WorkflowBuilder("umi_trimmer_subworkflow")
 
         ## Inputs
-        w.input("fastqPair", FastqGzPair)
-        w.input("agentlibrary", String)
+        w.input("fastqPair", FastqGzPair())
+        w.input("agentlibrary", String())
 
         w.step(
             "agenttrimsub",
@@ -110,6 +127,7 @@ class CaptureSomaticTumourOnlyUMI(
             "cutadapt_removeMiddle3Adapter": self.getfastqc_adapters,
         }
 
+        ## STEPS
         self.step(
             "alignUMI",
             BwaPostAltAlignerUMI(
@@ -132,6 +150,7 @@ class CaptureSomaticTumourOnlyUMI(
             ),
         )
 
+        ## OUTPUTS
         self.output("out_bam", source=self.merge_and_mark.out)
         self.output(
             "umimetrics",
