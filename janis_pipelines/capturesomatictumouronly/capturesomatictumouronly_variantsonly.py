@@ -1,5 +1,5 @@
 from janis_core import Int, Float, Directory, StringFormatter
-from janis_bioinformatics.data_types import Bed, Vcf
+from janis_bioinformatics.data_types import Bed, Vcf, VcfTabix
 
 
 from janis_pipelines.capturesomatictumouronly_gatk.capturesomatictumouronlygatk_variantsonly import (
@@ -171,7 +171,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             ),
         )
         self.output(
-            "out_varaints_pisces",
+            "out_variants_pisces",
             source=self.vc_pisces.out,
             output_folder="variants",
             output_name=StringFormatter(
