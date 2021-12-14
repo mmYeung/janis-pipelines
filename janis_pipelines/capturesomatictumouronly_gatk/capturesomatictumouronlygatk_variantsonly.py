@@ -1,11 +1,67 @@
-from janis_core import String, Array, WorkflowMetadata, StringFormatter
+from janis_core import (
+    String,
+    Array,
+    WorkflowMetadata,
+    StringFormatter,
+    InputQualityType,
+)
 from janis_unix.tools import UncompressArchive
 
-from janis_bioinformatics.data_types import BamBai, Bed, Vcf, CompressedVcf
+from janis_bioinformatics.data_types import (
+    BamBai,
+    Bed,
+    Vcf,
+    CompressedVcf,
+    VcfTabix,
+)
 
 from janis_pipelines.wgs_somatic_gatk.wgssomaticgatk_variantsonly import (
     WGSSomaticGATKVariantsOnly,
 )
+
+from janis_pipelines.reference import WGS_INPUTS
+
+INPUT_DOCS = {
+    **WGS_INPUTS,
+    "normal_inputs": {
+        "doc": "An array of NORMAL FastqGz pairs. These are aligned separately and merged "
+        "to create higher depth coverages from multiple sets of reads",
+        "quality": InputQualityType.user,
+        "example": [
+            ["normal_R1.fastq.gz", "normal_R2.fastq.gz"],
+            ["normal_R1-TOPUP.fastq.gz", "normal_R2-TOPUP.fastq.gz"],
+        ],
+    },
+    "tumor_inputs": {
+        "doc": "An array of TUMOR FastqGz pairs. These are aligned separately and merged "
+        "to create higher depth coverages from multiple sets of reads",
+        "quality": InputQualityType.user,
+        "example": [
+            ["tumor_R1.fastq.gz", "tumor_R2.fastq.gz"],
+            ["tumor_R1-TOPUP.fastq.gz", "tumor_R2-TOPUP.fastq.gz"],
+        ],
+    },
+    "normal_name": {
+        "doc": "Sample name for the NORMAL sample from which to generate the readGroupHeaderLine for BwaMem",
+        "quality": InputQualityType.user,
+        "example": "NA12878_normal",
+    },
+    "tumor_name": {
+        "doc": "Sample name for the TUMOR sample from which to generate the readGroupHeaderLine for BwaMem",
+        "quality": InputQualityType.user,
+        "example": "NA12878_tumor",
+    },
+    "normal_bam": {
+        "doc": "Indexed NORMAL bam to call somatic variants against",
+        "quality": InputQualityType.user,
+        "example": "NA12878-normal.bam",
+    },
+    "tumor_bam": {
+        "doc": "Indexed TUMOR bam to call somatic variants against",
+        "quality": InputQualityType.user,
+        "example": "NA12878-normal.bam",
+    },
+}
 
 from janis_bioinformatics.tools.dawson import GenerateChromosomeIntervalsFromBed
 
@@ -44,6 +100,12 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.add_inputs_for_configuration()
         self.add_inputs_for_intervals()
         self.add_inputs_for_reference()
+
+    def add_inputs_for_configuration(self):
+        self.input("gnomad", VcfTabix(), doc=INPUT_DOCS["gnomad"])
+        self.input(
+            "panel_of_normals", VcfTabix(), doc=INPUT_DOCS["panel_of_normals"]
+        )
 
     def add_gatk_variantcaller(self, tumour_bam_source):
 
@@ -128,7 +190,7 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
 
         self.output(
             "out_variants_pass_gatk",
-            source=self.filterpass.out,
+            source=self.vc_gatk_filterpass.out,
             output_folder=["variants"],
             output_name=StringFormatter(
                 "{samplename}.gatk.recode.vcf", samplename=self.sample_name
