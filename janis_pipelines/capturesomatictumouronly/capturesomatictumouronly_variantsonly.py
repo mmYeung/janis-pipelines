@@ -88,13 +88,13 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             VardictGermlineVariantCaller(
                 bam=bam_source,
                 sample_name=self.sample_name,
-                intervals=self.generate_bed_chrom_split.out_regions,
+                intervals=self.intervals,
                 header_lines=self.generate_vardict_headerlines.out,
                 reference=self.reference,
                 allele_freq_threshold=self.minVaf,
                 minMappingQual=self.minMQ,
+                sv=False,
             ),
-            scatter="intervals",
         )
 
         self.output(
