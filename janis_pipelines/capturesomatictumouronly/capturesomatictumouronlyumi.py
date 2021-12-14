@@ -14,22 +14,6 @@ from janis_bioinformatics.tools.bwakit import BwaPostAltAlignerUMI
 
 from janis_bioinformatics.tools.common import MergeAndMarkBamsUMI_4_1_2
 
-########
-from janis_bioinformatics.tools.dawson import GenerateChromosomeIntervalsFromBed
-
-from janis_bioinformatics.tools.common.gatkbasecalbam import (
-    GATKBaseRecalBQSRWorkflow_4_1_3,
-)
-from janis_bioinformatics.tools.variantcallers import (
-    GatkSomaticVariantCallerTumorOnlyTargeted,
-)
-from janis_bioinformatics.tools.bcftools import (
-    BcfToolsConcat_1_9,
-    BcfToolsSort_1_9,
-    BcfToolsNorm_1_9,
-)
-
-##########
 from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly_variantsonly import (
     CaptureSomaticTumourOnlyMultiCallersVariantsOnly,
 )
@@ -73,127 +57,32 @@ class CaptureSomaticTumourOnlyUMI(
 
         self.add_preprocessing()
 
-        ### Not working
-        # self.add_gatk_variantcaller(tumour_bam_source=self.out_bam)
-
-        recal_ins = {
-            "reference": self.reference,
-            "intervals": self.intervals,
-            "snps_dbsnp": self.snps_dbsnp,
-            "snps_1000gp": self.snps_1000gp,
-            "known_indels": self.known_indels,
-            "mills_indels": self.mills_indels,
-        }
-
         self.step(
-            "bqsr_tumour",
-            GATKBaseRecalBQSRWorkflow_4_1_3(bam=self.out_bam, **recal_ins),
+            "callers",
+            CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
+                bam=self.merge_and_mark.out,
+                sample_name=self.sample_name,
+                reference=self.reference,
+                referenceFolder=self.referenceFolder,
+                intervals=self.intervals,
+                minVaf=self.minVaf,
+                minMQ=self.minMQ,
+                minAD=self.minAD,
+                minDP=self.minDP,
+                minBQ=self.minBQ,
+                pileupMaxDepth=self.pileupMaxDepth,
+                pileupMinBQ=self.pileupMinBQ,
+                varscanPval=self.varscanPval,
+                piscesVCminVQ=self.piscesVCminVQ,
+                piscesVQRminVQ=self.piscesVQRminVQ,
+                snps_dbsnp=self.snps_dbsnp,
+                snps_1000gp=self.snps_1000gp,
+                known_indels=self.known_indels,
+                mills_indels=self.mills_indels,
+                gnomad=self.gnomad,
+                panel_of_normals=self.panel_of_normals,
+            ),
         )
-
-        ### working
-        # self.add_pisces(bam_source=self.out_bam)
-        # self.add_varscan2(bam_source=self.out_bam)
-
-        # self.step(
-        #     "generate_bed_chrom_split",
-        #     GenerateChromosomeIntervalsFromBed(
-        #         prefix="chr", referenceBed=self.intervals
-        #     ),
-        # )
-        # self.add_vardict(bam_source=self.out_bam)
-
-        # self.step(
-        #     "vc_gatk",
-        #     GatkSomaticVariantCallerTumorOnlyTargeted(
-        #         bam=self.bqsr_tumour.out,
-        #         intervals=self.generate_bed_chrom_split.out_regions,
-        #         reference=self.reference,
-        #         gnomad=self.gnomad,
-        #         panel_of_normals=self.panel_of_normals,
-        #     ),
-        #     scatter=["intervals", "bam"],
-        # )
-
-        # self.step(
-        #     "vc_gatk_merge",
-        #     BcfToolsConcat_1_9(vcf=self.vc_gatk.variants.as_type(Array(Vcf))),
-        # )
-        # self.step(
-        #     "vc_gatk_sort_combined",
-        #     BcfToolsSort_1_9(vcf=self.vc_gatk_merge.out.as_type(CompressedVcf)),
-        # )
-
-        # self.step(
-        #     "vc_gatk_normalise",
-        #     BcfToolsNorm_1_9(vcf=self.vc_gatk_sort_combined.out),
-        # )
-
-        # self.step(
-        #     "vc_gatk_uncompressvcf",
-        #     UncompressArchive(file=self.vc_gatk_sort_combined.out),
-        # )
-
-        # self.step(
-        #     "vc_gatk_filterpass",
-        #     VcfToolsvcftools_0_1_16(
-        #         vcf=self.vc_gatk_uncompressvcf.out.as_type(Vcf),
-        #         removeFileteredAll=True,
-        #         recode=True,
-        #         recodeINFOAll=True,
-        #     ),
-        # )
-
-        # self.output(
-        #     "out_variants_gatk",
-        #     source=self.vc_gatk_sort_combined.out,
-        #     output_folder=["variants", "unfiltered"],
-        #     doc="Merged variants from the GATK caller",
-        # )
-
-        # self.output(
-        #     "out_variants_pass_gatk",
-        #     source=self.vc_gatk_filterpass.out,
-        #     output_folder=["variants"],
-        #     output_name=StringFormatter(
-        #         "{samplename}.gatk.recode.vcf", samplename=self.sample_name
-        #     ),
-        # )
-
-        # self.output(
-        #     "gatk_bam",
-        #     source=self.vc_gatk.out_bam,
-        #     output_folder=["Bam"],
-        #     output_name=StringFormatter(
-        #         "{samplename}.gatk.bam", samplename=self.sample_name
-        #     ),
-        # )
-
-        # self.step(
-        #     "callers",
-        #     CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
-        #         bam=self.out_bam,
-        #         sample_name=self.sample_name,
-        #         reference=self.reference,
-        #         referenceFolder=self.referenceFolder,
-        #         intervals=self.intervals,
-        #         minVaf=self.minVaf,
-        #         minMQ=self.minMQ,
-        #         minAD=self.minAD,
-        #         minDP=self.minDP,
-        #         minBQ=self.minBQ,
-        #         pileupMaxDepth=self.pileupMaxDepth,
-        #         pileupMinBQ=self.pileupMinBQ,
-        #         varscanPval=self.varscanPval,
-        #         piscesVCminVQ=self.piscesVCminVQ,
-        #         piscesVQRminVQ=self.piscesVQRminVQ,
-        #         snps_dbsnp=self.snps_dbsnp,
-        #         snps_1000gp=self.snps_1000gp,
-        #         known_indels=self.known_indels,
-        #         mills_indels=self.mills_indels,
-        #         gnomad=self.gnomad,
-        #         panel_of_normals=self.panel_of_normals,
-        #     ),
-        # )
 
         # self.output("out", self.callers.out_variants)
 
