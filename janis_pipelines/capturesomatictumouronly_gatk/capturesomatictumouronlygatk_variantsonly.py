@@ -109,17 +109,9 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
 
     def add_gatk_variantcaller(self, tumour_bam_source):
 
-        # intervals = FirstOperator([self.gatk_intervals, generated_intervals])
-        self.step(
-            "generate_bed_chrom_split",
-            GenerateChromosomeIntervalsFromBed(
-                prefix="chr", referenceBed=self.intervals
-            ),
-        )
-
         recal_ins = {
             "reference": self.reference,
-            "intervals": self.generate_bed_chrom_split.out_regions,
+            "intervals": self.intervals,
             "snps_dbsnp": self.snps_dbsnp,
             "snps_1000gp": self.snps_1000gp,
             "known_indels": self.known_indels,
@@ -129,19 +121,17 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.step(
             "bqsr_tumour",
             GATKBaseRecalBQSRWorkflow_4_1_3(bam=tumour_bam_source, **recal_ins),
-            scatter="intervals",
         )
 
         self.step(
             "vc_gatk",
             GatkSomaticVariantCallerTumorOnlyTargeted(
                 bam=self.bqsr_tumour.out,
-                intervals=self.generate_bed_chrom_split.out_regions,
+                intervals=self.intervals,
                 reference=self.reference,
                 gnomad=self.gnomad,
                 panel_of_normals=self.panel_of_normals,
             ),
-            scatter=["intervals", "bam"],
         )
 
         self.step(
