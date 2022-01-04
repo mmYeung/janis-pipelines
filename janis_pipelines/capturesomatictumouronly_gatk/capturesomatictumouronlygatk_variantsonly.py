@@ -142,7 +142,7 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
 
         self.step(
             "vc_gatk_uncompressvcf",
-            UncompressArchive(file=self.vc_gatk_sort.out),
+            UncompressArchive(file=self.vc_gatk_normalise.out),
         )
 
         self.step(
