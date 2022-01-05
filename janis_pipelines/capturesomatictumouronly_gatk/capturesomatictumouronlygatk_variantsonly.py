@@ -134,11 +134,7 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
             ),
         )
 
-        self.step("vc_gatk_sort", BcfToolsSort_1_9(vcf=self.vc_gatk.variants))
-
-        self.step(
-            "vc_gatk_normalise", BcfToolsNorm_1_9(vcf=self.vc_gatk_sort.out)
-        )
+        self.step("vc_gatk_sort", BcfToolsSort_1_9(vcf=self.vc_gatk.out))
 
         self.step(
             "vc_gatk_uncompressvcf",
