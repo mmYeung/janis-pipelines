@@ -73,7 +73,6 @@ from janis_bioinformatics.tools.variantcallers import (
     GatkSomaticVariantCallerTumorOnlyTargeted,
 )
 from janis_bioinformatics.tools.bcftools import (
-    BcfToolsConcat_1_9,
     BcfToolsSort_1_9,
     BcfToolsNorm_1_9,
 )
@@ -103,11 +102,8 @@ class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.add_inputs_for_reference()
 
     def add_inputs_for_configuration(self):
-        self.input("gnomad", VcfTabix(), doc=INPUT_DOCS["gnomad"])
-        self.input(
-            "panel_of_normals", VcfTabix(), doc=INPUT_DOCS["panel_of_normals"]
-        )
-        self.input("genotype_germline", Boolean())
+        super().add_inputs_for_configuration()
+        self.input("genotype_germline", Boolean(), default=True)
 
     def add_gatk_variantcaller(self, tumour_bam_source):
 
