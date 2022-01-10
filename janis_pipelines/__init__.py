@@ -24,6 +24,10 @@ from janis_pipelines.capturesomatictumouronly_gatk.capturesomatictumouronlygatk_
     CaptureSomaticTumourOnlyGATKVariantsOnly,
 )
 
+from janis_pipelines.capturesomatictumouronly_gatk.capturesomaticvalidationgatk_variantsonly import (
+    CaptureSomaticValidationGATKVariantsOnly,
+)
+
 from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly import (
     CaptureSomaticTumourOnly,
 )
