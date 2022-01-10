@@ -1,6 +1,7 @@
 from janis_core import (
     String,
     Array,
+    Boolean,
     WorkflowMetadata,
     StringFormatter,
     InputQualityType,
@@ -106,6 +107,7 @@ class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.input(
             "panel_of_normals", VcfTabix(), doc=INPUT_DOCS["panel_of_normals"]
         )
+        self.input("genotype_germline", Boolean())
 
     def add_gatk_variantcaller(self, tumour_bam_source):
 
@@ -130,7 +132,7 @@ class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
                 intervals=self.intervals,
                 reference=self.reference,
                 gnomad=self.gnomad,
-                genotype_germline=True,
+                genotype_germline=self.genotype_germline,
             ),
         )
 
