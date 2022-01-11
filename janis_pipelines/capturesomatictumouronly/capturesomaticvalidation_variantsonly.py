@@ -46,6 +46,7 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
         self.add_inputs()
 
         self.add_gatk_variantcaller(tumour_bam_source=self.bam)
+        ## Adding outputs from GATK for easier referencing in following pipelines
         self.output(
             "out_variants_gatk",
             source=self.vc_gatk_filterpass.out,
