@@ -258,12 +258,24 @@ class CaptureSomaticValidationUMI(
             "umimetrics",
             source=self.merge_and_mark.umimetrics,
             output_folder=["stats"],
-            output_name=self.sample_name + "umimetrics=",
+            output_name=StringFormatter(
+                "{samplename}.umimetrics", samplename=self.sample_name
+            ),
         )
         self.output(
             "metrics",
             source=self.merge_and_mark.metrics,
             output_folder=["stats"],
-            output_name=self.sample_name + "metrics",
+            output_name=StringFormatter(
+                "{samplename}.metrics", self.sample_name
+            ),
         )
-        self.output("out_fastqc_reports", source=self.fastqc.out)
+        self.output(
+            "out_fastqc_reports",
+            source=self.fastqc.out,
+            output_folder=["QC"],
+            output_name=StringFormatter(
+                "{samplename}_fastqc_report", samplename=self.sample_name
+            ),
+        )
+
