@@ -15,15 +15,15 @@ from janis_bioinformatics.tools.bwakit import BwaPostAltAlignerUMI
 from janis_bioinformatics.tools.common import MergeAndMarkBamsUMI_4_1_2
 
 from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly_variantsonly import (
-    CaptureSomaticTumourOnlyMultiCallersVariantsOnly,
+    CaptureSomaticValidationMultiCallersVariantsOnly,
 )
 
 
-class CaptureSomaticTumourOnlyUMI(
-    CaptureSomaticTumourOnlyMultiCallersVariantsOnly
+class CaptureSomaticValidationUMI(
+    CaptureSomaticValidationMultiCallersVariantsOnly
 ):
     def id(self):
-        return "CaptureSomaticTumourOnlyUMI"
+        return "CaptureSomaticValidationUMI"
 
     def friendly_name(self):
         return "Capture Somatic Tumour Only with UMIs (Multi callers)"
@@ -59,7 +59,7 @@ class CaptureSomaticTumourOnlyUMI(
 
         self.step(
             "callers",
-            CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
+            CaptureSomaticValidationMultiCallersVariantsOnly(
                 bam=self.merge_and_mark.out,
                 sample_name=self.sample_name,
                 reference=self.reference,
