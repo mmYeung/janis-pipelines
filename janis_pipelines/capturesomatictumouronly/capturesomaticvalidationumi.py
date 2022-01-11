@@ -1,6 +1,6 @@
 from typing import Optional, List
 from janis_bioinformatics.data_types.fastq import FastqPair
-from janis_core import String, Array, File, WorkflowBuilder
+from janis_core import String, Array, File, WorkflowBuilder, StringFormatter
 
 from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 
@@ -84,7 +84,98 @@ class CaptureSomaticValidationUMI(
             ),
         )
 
-        # self.output("out", self.callers.out_variants)
+        ## Outputs
+        self.output(
+            "combined",
+            source=self.callers.out_variants,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.combined", self.sample_name
+            ),
+        )
+
+        self.output(
+            "vardict",
+            source=self.callers.out_variants_vardict,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.vardict.recode", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "varscan",
+            source=self.callers.out_variants_varscan2,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.varscan2.recode", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "mutect2",
+            source=self.callers.out_variants_pass_gatk,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.mutect2.recode", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "pisces",
+            source=self.callers.out_variants_pisces,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.pisces.recode", samplename=self.sample_name
+            ),
+        )
+
+        self.output(
+            "vardict_raw",
+            source=self.callers.variants_vardict,
+            output_folder=["variants", "raw"],
+            output_name=StringFormatter(
+                "{samplename}.vardict", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "varscan2_raw",
+            source=self.callers.variants_varscan2,
+            output_folder=["variants", "raw"],
+            output_name=StringFormatter(
+                "{samplename}.varscan", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "mutect2_raw",
+            source=self.callers.out_variants_gatk,
+            output_folder=["variants", "raw"],
+            output_name=StringFormatter(
+                "{samplename}.mutect2", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "pisces_raw",
+            source=self.callers.variants_pisces,
+            output_folder=["variants", "raw"],
+            output_name=StringFormatter(
+                "{samplename}.pisces", samplename=self.sample_name
+            ),
+        )
+
+        self.output(
+            "pisces_bam",
+            source=self.callers.pisces_bam,
+            output_folder=["Bam"],
+            output_name=StringFormatter(
+                "{samplename}.hygea.stitcher", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "gatk_bam",
+            source=self.callers.gatk_bam,
+            output_folder=["Bam"],
+            output_name=StringFormatter(
+                "{samplename}.gatk", samplename=self.sample_name
+            ),
+        )
 
     def add_inputs(self):
         self.input("reads", Array(FastqGzPair))
@@ -155,17 +246,24 @@ class CaptureSomaticValidationUMI(
         )
 
         ## OUTPUTS
-        self.output("out_bam", source=self.merge_and_mark.out)
+        self.output(
+            "out_bam",
+            source=self.merge_and_mark.out,
+            output_folder=["Bam"],
+            output_name=StringFormatter(
+                "{samplename}.umarkdups", samplename=self.sample_name
+            ),
+        )
         self.output(
             "umimetrics",
             source=self.merge_and_mark.umimetrics,
             output_folder=["stats"],
-            output_name=self.sample_name + "umimetrics.txt",
+            output_name=self.sample_name + "umimetrics=",
         )
         self.output(
             "metrics",
             source=self.merge_and_mark.metrics,
             output_folder=["stats"],
-            output_name=self.sample_name + "metrics.txt",
+            output_name=self.sample_name + "metrics",
         )
         self.output("out_fastqc_reports", source=self.fastqc.out)
