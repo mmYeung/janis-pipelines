@@ -36,6 +36,14 @@ from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly_variantso
     CaptureSomaticTumourOnlyMultiCallersVariantsOnly,
 )
 
+from janis_pipelines.capturesomatictumouronly.capturesomaticvalidation_variantsonly import (
+    CaptureSomaticValidationMultiCallersVariantsOnly,
+)
+
 from janis_pipelines.capturesomatictumouronly.capturesomatictumouronlyumi import (
     CaptureSomaticTumourOnlyUMI,
+)
+
+from janis_pipelines.capturesomatictumouronly.capturesomaticvalidationumi import (
+    CaptureSomaticValidationUMI,
 )
