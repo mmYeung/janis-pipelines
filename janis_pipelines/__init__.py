@@ -24,6 +24,10 @@ from janis_pipelines.capturesomatictumouronly_gatk.capturesomatictumouronlygatk_
     CaptureSomaticTumourOnlyGATKVariantsOnly,
 )
 
+from janis_pipelines.capturesomatictumouronly_gatk.capturesomaticvalidationgatk_variantsonly import (
+    CaptureSomaticValidationGATKVariantsOnly,
+)
+
 from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly import (
     CaptureSomaticTumourOnly,
 )
@@ -32,6 +36,14 @@ from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly_variantso
     CaptureSomaticTumourOnlyMultiCallersVariantsOnly,
 )
 
+from janis_pipelines.capturesomatictumouronly.capturesomaticvalidation_variantsonly import (
+    CaptureSomaticValidationMultiCallersVariantsOnly,
+)
+
 from janis_pipelines.capturesomatictumouronly.capturesomatictumouronlyumi import (
     CaptureSomaticTumourOnlyUMI,
+)
+
+from janis_pipelines.capturesomatictumouronly.capturesomaticvalidationumi import (
+    CaptureSomaticValidationUMI,
 )
