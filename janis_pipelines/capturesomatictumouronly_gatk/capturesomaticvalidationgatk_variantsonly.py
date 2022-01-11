@@ -128,6 +128,7 @@ class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
                 intervals=self.intervals,
                 reference=self.reference,
                 gnomad=self.gnomad,
+                panel_of_normals=self.panel_of_normals,
                 genotype_germline=self.genotype_germline,
             ),
         )
