@@ -250,7 +250,9 @@ class CaptureSomaticTumourOnlyUMI(
             "out_bam",
             source=self.merge_and_mark.out,
             output_folder=["Bam"],
-            output_name=StringFormatter("{samplename}.umarkdups"),
+            output_name=StringFormatter(
+                "{samplename}.umarkdups", samplename=self.sample_name
+            ),
         )
         self.output(
             "umimetrics",
