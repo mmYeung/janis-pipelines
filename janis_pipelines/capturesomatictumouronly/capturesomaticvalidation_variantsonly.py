@@ -12,7 +12,10 @@ from janis_bioinformatics.tools.variantcallers import (
     IlluminaSomaticPiscesVariantCallerTumourOnlyTargetedNoPON_5_2_10_49,
 )
 
-from janis_bioinformatics.tools.dawson import GenerateChromosomeIntervalsFromBed
+from janis_bioinformatics.tools.dawson import (
+    GenerateChromosomeIntervalsFromBed,
+    GenerateVarscan2HeaderLines,
+)
 
 from janis_bioinformatics.tools.pmac import (
     CombineVariants_0_0_8,
@@ -116,6 +119,10 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
 
     def add_varscan2(self, bam_source):
         self.step(
+            "generate_varscan2_headerlines",
+            GenerateVarscan2HeaderLines(reference=self.reference),
+        )
+        self.step(
             "vc_varscan2",
             VarscanGermlineCNSVariantCaller(
                 sample_name=self.sample_name,
@@ -127,6 +134,7 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
                 minAD=self.minAD,
                 minVaf=self.minVaf,
                 pval=self.varscanPval,
+                header_lines=self.generate_varscan2_headerlines.out,
             ),
         )
 
