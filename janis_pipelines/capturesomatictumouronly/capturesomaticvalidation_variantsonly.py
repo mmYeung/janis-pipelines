@@ -46,6 +46,31 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
         self.add_inputs()
 
         self.add_gatk_variantcaller(tumour_bam_source=self.bam)
+        self.output(
+            "out_variants_gatk",
+            source=self.vc_gatk_filterpass.out,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.gatk.recode", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "variants_gatk",
+            source=self.vc_gatk_sort.out,
+            output_folder=["variants", "unfiltered"],
+            output_name=StringFormatter(
+                "{samplename}.gatk", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "gatk_bam",
+            source=self.vc_gatk.out_bam,
+            output_folder=["Bam"],
+            output_name=StringFormatter(
+                "{samplename}.gatk", samplename=self.sample_name
+            ),
+        )
+
         self.add_vardict(bam_source=self.bam)
         self.add_varscan2(bam_source=self.bam)
         self.add_pisces(bam_source=self.bam)
@@ -170,7 +195,7 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
         )
 
         self.output(
-            "piscesBam",
+            "pisces_bam",
             source=self.vc_pisces.out_bam,
             output_folder="Bam",
             output_name=StringFormatter(
