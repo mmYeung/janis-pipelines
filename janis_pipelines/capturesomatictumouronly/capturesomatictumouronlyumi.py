@@ -1,6 +1,6 @@
 from typing import Optional, List
 from janis_bioinformatics.data_types.fastq import FastqPair
-from janis_core import String, Array, File, WorkflowBuilder
+from janis_core import String, Array, File, WorkflowBuilder, StringFormatter
 
 from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 
@@ -84,7 +84,98 @@ class CaptureSomaticTumourOnlyUMI(
             ),
         )
 
-        # self.output("out", self.callers.out_variants)
+        ## Outputs
+        self.output(
+            "combined",
+            source=self.callers.out_variants,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.combined", self.sample_name
+            ),
+        )
+
+        self.output(
+            "vardict",
+            source=self.callers.out_variants_vardict,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.vardict.recode.vcf", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "varscan",
+            source=self.callers.out_variants_varscan2,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.varscan2.recode.vcf", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "mutect2",
+            source=self.callers.out_variants_pass_gatk,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.mutect2.recode.vcf", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "pisces",
+            source=self.callers.out_variants_pisces,
+            output_folder=["variants"],
+            output_name=StringFormatter(
+                "{samplename}.pisces.recode.vcf", samplename=self.sample_name
+            ),
+        )
+
+        self.output(
+            "vardict_raw",
+            source=self.callers.variants_vardict,
+            output_folder=["variants", "raw"],
+            output_name=StringFormatter(
+                "{samplename}.vardict.vcf", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "varscan2_raw",
+            source=self.callers.variants_varscan2,
+            output_folder=["variants", "raw"],
+            output_name=StringFormatter(
+                "{samplename}.varscan.vcf", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "mutect2_raw",
+            source=self.callers.out_variants_gatk,
+            output_folder=["variants", "raw"],
+            output_name=StringFormatter(
+                "{samplename}.mutect2.vcf", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "pisces_raw",
+            source=self.callers.variants_pisces,
+            output_folder=["variants", "raw"],
+            output_name=StringFormatter(
+                "{samplename}.pisces.vcf", samplename=self.sample_name
+            ),
+        )
+
+        self.output(
+            "pisces_bam",
+            source=self.callers.pisces_bam,
+            output_folder=["Bam"],
+            output_name=StringFormatter(
+                "{samplename}.hygea.stitcher", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "gatk_bam",
+            source=self.callers.gatk_bam,
+            output_folder=["Bam"],
+            output_name=StringFormatter(
+                "{samplename}.gatk", samplename=self.sample_name
+            ),
+        )
 
     def add_inputs(self):
         self.input("reads", Array(FastqGzPair))
@@ -155,7 +246,12 @@ class CaptureSomaticTumourOnlyUMI(
         )
 
         ## OUTPUTS
-        self.output("out_bam", source=self.merge_and_mark.out)
+        self.output(
+            "out_bam",
+            source=self.merge_and_mark.out,
+            output_folder=["Bam"],
+            output_name=StringFormatter("{samplename}.umarkdups"),
+        )
         self.output(
             "umimetrics",
             source=self.merge_and_mark.umimetrics,
