@@ -267,7 +267,7 @@ class CaptureSomaticValidationUMI(
             source=self.merge_and_mark.metrics,
             output_folder=["stats"],
             output_name=StringFormatter(
-                "{samplename}.metrics", self.sample_name
+                "{samplename}.metrics", samplename=self.sample_name
             ),
         )
         self.output(
