@@ -163,7 +163,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
         )
 
         self.output(
-            "piscesBam",
+            "pisces_bam",
             source=self.vc_pisces.out_bam,
             output_folder="Bam",
             output_name=StringFormatter(
