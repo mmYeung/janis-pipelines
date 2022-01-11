@@ -14,7 +14,7 @@ from janis_bioinformatics.tools.bwakit import BwaPostAltAlignerUMI
 
 from janis_bioinformatics.tools.common import MergeAndMarkBamsUMI_4_1_2
 
-from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly_variantsonly import (
+from janis_pipelines.capturesomatictumouronly.capturesomaticvalidation_variantsonly import (
     CaptureSomaticValidationMultiCallersVariantsOnly,
 )
 
