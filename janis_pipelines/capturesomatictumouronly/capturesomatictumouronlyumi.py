@@ -90,7 +90,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.out_variants,
             output_folder=["variants"],
             output_name=StringFormatter(
-                "{samplename}.combined", self.sample_name
+                "{samplename}.combined", samplename=self.sample_name
             ),
         )
 
@@ -112,7 +112,7 @@ class CaptureSomaticTumourOnlyUMI(
         )
         self.output(
             "mutect2",
-            source=self.callers.out_variants_pass_gatk,
+            source=self.callers.out_variants_gatk,
             output_folder=["variants"],
             output_name=StringFormatter(
                 "{samplename}.mutect2.recode", samplename=self.sample_name
@@ -145,7 +145,7 @@ class CaptureSomaticTumourOnlyUMI(
         )
         self.output(
             "mutect2_raw",
-            source=self.callers.out_variants_gatk,
+            source=self.callers.variants_gatk,
             output_folder=["variants", "raw"],
             output_name=StringFormatter(
                 "{samplename}.mutect2", samplename=self.sample_name
