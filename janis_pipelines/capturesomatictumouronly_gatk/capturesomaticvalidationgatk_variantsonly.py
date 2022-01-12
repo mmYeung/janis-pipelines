@@ -130,6 +130,7 @@ class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
                 gnomad=self.gnomad,
                 panel_of_normals=self.panel_of_normals,
                 genotype_germline=self.genotype_germline,
+                gatk_bam_str="mutect2",
             ),
         )
 
