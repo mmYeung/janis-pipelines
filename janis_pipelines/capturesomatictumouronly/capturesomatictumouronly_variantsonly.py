@@ -271,7 +271,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.tabixvcf.out,
             output_folder=["variants"],
             output_name=StringFormatter(
-                "{samplename}.combined", samplename=self.sample_name
+                "{samplename}.combined.vcf", samplename=self.sample_name
             ),
             doc="Combined variants from all 4 variant callers",
         )

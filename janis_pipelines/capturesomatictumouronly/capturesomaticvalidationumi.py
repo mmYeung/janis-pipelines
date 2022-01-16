@@ -90,7 +90,7 @@ class CaptureSomaticValidationUMI(
             source=self.callers.out_variants,
             output_folder=["variants"],
             output_name=StringFormatter(
-                "{samplename}.combined", samplename=self.sample_name
+                "{samplename}.combined.vcf", samplename=self.sample_name
             ),
         )
 
