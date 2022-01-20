@@ -81,6 +81,7 @@ class CaptureSomaticTumourOnlyUMI(
                 mills_indels=self.mills_indels,
                 gnomad=self.gnomad,
                 panel_of_normals=self.panel_of_normals,
+                pisces_awk_script=self.pisces_awk_script,
             ),
         )
 
