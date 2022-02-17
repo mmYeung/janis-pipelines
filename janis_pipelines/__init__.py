@@ -47,3 +47,5 @@ from janis_pipelines.capturesomatictumouronly.capturesomatictumouronlyumi import
 from janis_pipelines.capturesomatictumouronly.capturesomaticvalidationumi import (
     CaptureSomaticValidationUMI,
 )
+
+from janis_pipelines.alignment.agilentUMIalignment import AgilentUMIalignment
