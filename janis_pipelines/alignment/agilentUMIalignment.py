@@ -1,7 +1,7 @@
 from janis_bioinformatics.tools import BioinformaticsWorkflow
 from janis_core import String, Array, File, StringFormatter, WorkflowBuilder
 
-from janis_bioinformatics.data_types import FastqGzPair
+from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 
 from janis_bioinformatics.tools.agent import AgentTrimmer_2_0_2
 
@@ -53,7 +53,11 @@ class AgilentUMIalignment(BioinformaticsWorkflow):
     def add_inputs(self):
         self.input("reads", Array(FastqGzPair))
         self.input("sample_name", String())
+
+        self.input("reference", FastaWithDict)
+
         self.input("referenceAlt", File())
+
         # For Agent Trimmer
         self.input("agentlibrary", String())
         # For CutAdapt
