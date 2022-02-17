@@ -14,9 +14,9 @@ from janis_bioinformatics.tools.bwakit import BwaPostAltAlignerUMI
 from janis_bioinformatics.tools.common import MergeAndMarkBamsUMI_4_1_2
 
 
-class AgilentUMIpreprocessing(BioinformaticsWorkflow):
+class AgilentUMIalignment(BioinformaticsWorkflow):
     def id(self):
-        return "AgilentUMIpreprocessing"
+        return "AgilentUMIalignment"
 
     def friendly_name(self):
         return "Preprocessing of Agilent UMI data from FASTQ to UMI duplicate marked bam"
