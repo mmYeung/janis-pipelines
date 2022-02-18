@@ -123,7 +123,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 reference=self.reference,
                 allele_freq_threshold=self.minVaf,
                 minMappingQual=self.minMQ,
-                sv=False,
+                sv=True,
             ),
         )
 
