@@ -161,23 +161,6 @@ class CaptureSomaticValidationUMI(
             ),
         )
 
-        self.output(
-            "pisces_bam",
-            source=self.callers.pisces_bam,
-            output_folder=["Bam"],
-            output_name=StringFormatter(
-                "{samplename}.hygea.stitcher", samplename=self.sample_name
-            ),
-        )
-        self.output(
-            "gatk_bam",
-            source=self.callers.gatk_bam,
-            output_folder=["Bam"],
-            output_name=StringFormatter(
-                "{samplename}.gatk", samplename=self.sample_name
-            ),
-        )
-
     def add_inputs(self):
         self.input("reads", Array(FastqGzPair))
         self.input("sample_name", String())
