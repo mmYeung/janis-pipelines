@@ -102,6 +102,7 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
         self.input("piscesVCminVQ", Int())
         self.input("piscesVQRminVQ", Int())
         self.input("pisces_awk_script", File())
+        self.input("pisces_noise_level", Int(optional=True))
 
     def add_inputs(self):
         super().add_inputs()
@@ -191,7 +192,11 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
                 referenceFolder=self.referenceFolder,
                 intervals=self.intervals,
                 minBQ=self.minBQ,
+                minMQ=self.minMQ,
+                minDP = self.minDP,
+                minVAF=self.minVAF,
                 VCminVQ=self.piscesVCminVQ,
+                noise_level=self.pisces_noise_level
                 VQRminVQ=self.piscesVQRminVQ,
                 pisces_awk_script=self.pisces_awk_script,
             ),
