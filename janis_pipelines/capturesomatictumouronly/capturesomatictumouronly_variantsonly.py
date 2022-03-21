@@ -1,4 +1,4 @@
-from janis_core import Int, Float, Directory, File, StringFormatter
+from janis_core import Int, Float, String, Directory, File, StringFormatter
 from janis_bioinformatics.data_types import Bed, Vcf, VcfTabix
 
 
@@ -99,8 +99,10 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
         self.input("varscanPval", Float(), default=0.0001)
 
         # Pisces
+        self.input("pisces_ploidy", String(optional=True))
         self.input("piscesVCminVQ", Int())
         self.input("piscesVQRminVQ", Int())
+        self.input("pisces_noise_level", Int(optional=True))
         self.input("pisces_awk_script", File())
 
     def add_inputs(self):
@@ -191,7 +193,9 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 referenceFolder=self.referenceFolder,
                 PON=self.panel_of_normals,
                 intervals=self.intervals,
+                ploidy=self.pisces_ploidy,
                 minBQ=self.minBQ,
+                minMQ=self.minMQ,
                 VCminVQ=self.piscesVCminVQ,
                 VQRminVQ=self.piscesVQRminVQ,
                 pisces_awk_script=self.pisces_awk_script,
