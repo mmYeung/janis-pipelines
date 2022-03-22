@@ -88,7 +88,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
         self.input("min_bq", Int())
         # Varscan2
         self.input("pileup_max_depth", Int(), default=20000)
-        self.input("pileupmin_bq", Int())
+        self.input("pileup_min_bq", Int())
         self.input("varscan_pval", Float(), default=0.0001)
 
         # Pisces
