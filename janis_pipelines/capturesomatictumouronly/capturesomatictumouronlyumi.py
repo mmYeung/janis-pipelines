@@ -65,16 +65,16 @@ class CaptureSomaticTumourOnlyUMI(
                 reference=self.reference,
                 referenceFolder=self.referenceFolder,
                 intervals=self.intervals,
-                minVaf=self.minVaf,
-                minMQ=self.minMQ,
-                minAD=self.minAD,
-                minDP=self.minDP,
-                minBQ=self.minBQ,
-                pileupMaxDepth=self.pileupMaxDepth,
-                pileupMinBQ=self.pileupMinBQ,
-                varscanPval=self.varscanPval,
-                piscesVCminVQ=self.piscesVCminVQ,
-                piscesVQRminVQ=self.piscesVQRminVQ,
+                min_vaf=self.min_vaf,
+                min_mq=self.min_mq,
+                min_ad=self.min_ad,
+                min_dp=self.min_dp,
+                min_bq=self.min_bq,
+                pileup_max_depth=self.pileup_max_depth,
+                pileup_min_bq=self.pileup_min_bq,
+                varscan_pval=self.varscan_pval,
+                pisces_vc_min_vq=self.pisces_vc_min_vq,
+                pisces_vqr_min_vq=self.pisces_vqr_min_vq,
                 snps_dbsnp=self.snps_dbsnp,
                 snps_1000gp=self.snps_1000gp,
                 known_indels=self.known_indels,
@@ -181,7 +181,7 @@ class CaptureSomaticTumourOnlyUMI(
     def add_inputs(self):
         self.input("reads", Array(FastqGzPair))
         self.input("sample_name", String())
-        self.input("referenceAlt", File())
+        self.input("reference_alt", File())
         # For Agent Trimmer
         self.input("agentlibrary", String())
         # For CutAdapt
@@ -218,7 +218,7 @@ class CaptureSomaticTumourOnlyUMI(
 
         sub_inputs = {
             "reference": self.reference,
-            "referenceAlt": self.referenceAlt,
+            "referenceAlt": self.reference_alt,
             "cutadapt_adapter": self.getfastqc_adapters,
             "cutadapt_removeMiddle3Adapter": self.getfastqc_adapters,
         }
