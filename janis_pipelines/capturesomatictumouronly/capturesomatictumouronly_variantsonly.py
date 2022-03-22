@@ -1,5 +1,5 @@
 from janis_core import Int, Float, String, Directory, File, StringFormatter
-from janis_bioinformatics.data_types import Bed, Vcf, VcfTabix
+from janis_bioinformatics.data_types import Vcf
 
 
 from janis_pipelines.capturesomatictumouronly_gatk.capturesomatictumouronlygatk_variantsonly import (
@@ -12,10 +12,7 @@ from janis_bioinformatics.tools.variantcallers import (
     IlluminaSomaticPiscesVariantCallerTumourOnlyTargeted_5_2_10_49,
 )
 
-from janis_bioinformatics.tools.dawson import (
-    GenerateChromosomeIntervalsFromBed,
-    GenerateVarscan2HeaderLines,
-)
+from janis_bioinformatics.tools.dawson import GenerateVarscan2HeaderLines
 
 from janis_bioinformatics.tools.pmac import (
     CombineVariants_0_0_8,
@@ -80,28 +77,24 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
 
     def add_inputs_for_reference(self):
         super().add_inputs_for_reference()
-        self.input("referenceFolder", Directory())
-
-    def add_inputs_for_intervals(self):
-        super().add_inputs_for_intervals()
-        self.input("intervals", Bed())
+        self.input("reference_folder", Directory())
 
     def add_inputs_for_vc(self):
         # General parameters
-        self.input("minVaf", Float())
-        self.input("minMQ", Int())
-        self.input("minAD", Int())
-        self.input("minDP", Int())
-        self.input("minBQ", Int())
+        self.input("min_vaf", Float())
+        self.input("min_mq", Int())
+        self.input("min_ad", Int())
+        self.input("min_dp", Int())
+        self.input("min_bq", Int())
         # Varscan2
-        self.input("pileupMaxDepth", Int(), default=20000)
-        self.input("pileupMinBQ", Int())
-        self.input("varscanPval", Float(), default=0.0001)
+        self.input("pileup_max_depth", Int(), default=20000)
+        self.input("pileupmin_bq", Int())
+        self.input("varscan_pval", Float(), default=0.0001)
 
         # Pisces
         self.input("pisces_ploidy", String(optional=True))
-        self.input("piscesVCminVQ", Int())
-        self.input("piscesVQRminVQ", Int())
+        self.input("pisces_vc_min_vq", Int())
+        self.input("pisces_vqr_min_vq", Int())
         self.input("pisces_noise_level", Int(optional=True))
         self.input("pisces_awk_script", File())
 
@@ -123,9 +116,9 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 intervals=self.intervals,
                 header_lines=self.generate_vardict_headerlines.out,
                 reference=self.reference,
-                allele_freq_threshold=self.minVaf,
-                minMappingQual=self.minMQ,
-                sv=True,
+                allele_freq_threshold=self.min_vaf,
+                min_mapping_qual=self.min_mq,
+                no_sv_call=True,
             ),
         )
 
@@ -157,12 +150,12 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 sample_name=self.sample_name,
                 bam=bam_source,
                 reference=self.reference,
-                maxDepth=self.pileupMaxDepth,
-                minBQ=self.minBQ,
-                minDP=self.minDP,
-                minAD=self.minAD,
-                minVaf=self.minVaf,
-                pval=self.varscanPval,
+                maxDepth=self.pileup_max_depth,
+                minBQ=self.min_bq,
+                minDP=self.min_dp,
+                minAD=self.min_ad,
+                minVaf=self.min_vaf,
+                pval=self.varscan_pval,
                 header_lines=self.generate_varscan2_headerlines.out,
             ),
         )
@@ -190,14 +183,15 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             IlluminaSomaticPiscesVariantCallerTumourOnlyTargeted_5_2_10_49(
                 bam=bam_source,
                 sample_name=self.sample_name,
-                referenceFolder=self.referenceFolder,
+                reference_folder=self.reference_folder,
                 PON=self.panel_of_normals,
                 intervals=self.intervals,
                 ploidy=self.pisces_ploidy,
-                minBQ=self.minBQ,
-                minMQ=self.minMQ,
-                VCminVQ=self.piscesVCminVQ,
-                VQRminVQ=self.piscesVQRminVQ,
+                minBQ=self.min_bq,
+                minMQ=self.min_mq,
+                minVAF=self.min_vaf,
+                VCminVQ=self.pisces_vc_min_vq,
+                VQRminVQ=self.pisces_vqr_min_vq,
                 pisces_awk_script=self.pisces_awk_script,
             ),
         )
@@ -226,9 +220,6 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 "{samplename}.pisces.vcf", samplename=self.sample_name
             ),
         )
-
-    def add_inputs_for_intervals(self):
-        self.input("intervals", Bed())
 
     def add_combine_variants(self, bam_source):
         self.step(
