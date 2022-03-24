@@ -56,7 +56,7 @@ class CaptureSomaticTumourOnly(
     def add_inputs(self):
         self.input("reads", Array(FastqGzPair))
         self.input("sample_name", String())
-        self.input("referenceAlt", File())
+        self.input("reference_alt", File())
         # For CutAdapt
         self.input("cutadapt_adapters", File(optional=True))
         self.add_inputs_for_reference()
@@ -68,7 +68,7 @@ class CaptureSomaticTumourOnly(
 
         sub_inputs = {
             "reference": self.reference,
-            "referenceAlt": self.referenceAlt,
+            "referenceAlt": self.reference_alt,
             "cutadapt_adapter": self.getfastqc_adapters,
             "cutadapt_removeMiddle3Adapter": self.getfastqc_adapters,
         }
