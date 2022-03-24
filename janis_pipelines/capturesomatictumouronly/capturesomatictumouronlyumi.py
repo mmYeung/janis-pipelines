@@ -37,9 +37,9 @@ class CaptureSomaticTumourOnlyUMI(
         self.step(
             "agenttrim",
             self.umi_trimmer_subworkflow(
-                fastqPair=self.reads, agentlibrary=self.agentlibrary
+                fastq_pair=self.reads, agentlibrary=self.agentlibrary
             ),
-            scatter=["fastqPair"],
+            scatter=["fastq_pair"],
         )
 
         self.step(
@@ -63,7 +63,13 @@ class CaptureSomaticTumourOnlyUMI(
                 bam=self.merge_and_mark.out,
                 sample_name=self.sample_name,
                 reference=self.reference,
-                referenceFolder=self.referenceFolder,
+                reference_folder=self.reference_folder,
+                snps_dbsnp=self.snps_dbsnp,
+                snps_1000gp=self.snps_1000gp,
+                known_indels=self.known_indels,
+                mills_indels=self.mills_indels,
+                gnomad=self.gnomad,
+                panel_of_normals=self.panel_of_normals,
                 intervals=self.intervals,
                 min_vaf=self.min_vaf,
                 min_mq=self.min_mq,
@@ -75,12 +81,6 @@ class CaptureSomaticTumourOnlyUMI(
                 varscan_pval=self.varscan_pval,
                 pisces_vc_min_vq=self.pisces_vc_min_vq,
                 pisces_vqr_min_vq=self.pisces_vqr_min_vq,
-                snps_dbsnp=self.snps_dbsnp,
-                snps_1000gp=self.snps_1000gp,
-                known_indels=self.known_indels,
-                mills_indels=self.mills_indels,
-                gnomad=self.gnomad,
-                panel_of_normals=self.panel_of_normals,
                 pisces_awk_script=self.pisces_awk_script,
             ),
         )
@@ -196,14 +196,14 @@ class CaptureSomaticTumourOnlyUMI(
         w = WorkflowBuilder("umi_trimmer_subworkflow")
 
         ## Inputs
-        w.input("fastqPair", FastqGzPair())
+        w.input("fastq_pair", FastqGzPair())
         w.input("agentlibrary", String())
 
         w.step(
             "agenttrimsub",
             AgentTrimmer_2_0_2(
-                read1=w.fastqPair[0],
-                read2=w.fastqPair[1],
+                read1=w.fastq_pair[0],
+                read2=w.fastq_pair[1],
                 outdir=".",
                 library=w.agentlibrary,
                 agentVersion="2.0.2",
@@ -218,7 +218,7 @@ class CaptureSomaticTumourOnlyUMI(
 
         sub_inputs = {
             "reference": self.reference,
-            "referenceAlt": self.reference_alt,
+            "reference_alt": self.reference_alt,
             "cutadapt_adapter": self.getfastqc_adapters,
             "cutadapt_removeMiddle3Adapter": self.getfastqc_adapters,
         }
