@@ -24,7 +24,7 @@ from janis_pipelines.capturesomatictumouronly.capturesomatictumouronlyumi import
 
 class CaptureSomaticTumourOnlyUMIMultiSample(BioinformaticsWorkflow):
     def id(self):
-        return "CaptureSomaticTumourOnlyUMIMultSample"
+        return "CaptureSomaticTumourOnlyUMIMultiSample"
 
     def friendly_name(self):
         return "Capture Somatic Tumour Only with UMIs (Multi callers)"

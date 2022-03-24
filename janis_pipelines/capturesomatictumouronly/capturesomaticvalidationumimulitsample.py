@@ -24,7 +24,7 @@ from janis_pipelines.capturesomatictumouronly.capturesomaticvalidationumi import
 
 class CaptureSomaticValidationUMIMultiSample(BioinformaticsWorkflow):
     def id(self):
-        return "CaptureSomaticValidationUMIMultSample"
+        return "CaptureSomaticValidationUMIMultiSample"
 
     def friendly_name(self):
         return "Capture Somatic Validation with UMIs (Multi callers)"
