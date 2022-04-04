@@ -1,20 +1,13 @@
 from janis_core import (
     Boolean,
     String,
-    Array,
     WorkflowMetadata,
     StringFormatter,
     InputQualityType,
 )
 from janis_unix.tools import UncompressArchive
 
-from janis_bioinformatics.data_types import (
-    BamBai,
-    Bed,
-    Vcf,
-    CompressedVcf,
-    VcfTabix,
-)
+from janis_bioinformatics.data_types import BamBai, Bed, Vcf, VcfTabix
 
 from janis_pipelines.wgs_somatic_gatk.wgssomaticgatk_variantsonly import (
     WGSSomaticGATKVariantsOnly,
@@ -64,19 +57,13 @@ INPUT_DOCS = {
     },
 }
 
-from janis_bioinformatics.tools.dawson import GenerateChromosomeIntervalsFromBed
-
 from janis_bioinformatics.tools.common.gatkbasecalbam import (
     GATKBaseRecalBQSRWorkflow_4_1_3,
 )
 from janis_bioinformatics.tools.variantcallers import (
     GatkSomaticVariantCallerTumorOnlyTargeted,
 )
-from janis_bioinformatics.tools.bcftools import (
-    BcfToolsConcat_1_9,
-    BcfToolsSort_1_9,
-    BcfToolsNorm_1_9,
-)
+from janis_bioinformatics.tools.bcftools import BcfToolsSort_1_9
 
 from janis_bioinformatics.tools.vcftools import VcfToolsvcftools_0_1_16
 
