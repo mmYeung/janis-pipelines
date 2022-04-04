@@ -47,6 +47,7 @@ class CaptureSomaticValidationUMIMultiSample(BioinformaticsWorkflow):
         self.input("snps_1000gp", VcfTabix())
         self.input("known_indels", VcfTabix())
         self.input("mills_indels", VcfTabix())
+        self.input("gnomad", VcfTabix())
         ## Agent
         self.input("agentlibrary", String())
         # Variant Callers General
@@ -79,6 +80,7 @@ class CaptureSomaticValidationUMIMultiSample(BioinformaticsWorkflow):
                 mills_indels=self.mills_indels,
                 snps_1000gp=self.snps_1000gp,
                 snps_dbsnp=self.snps_dbsnp,
+                gnomad=self.gnomad,
                 agentlibrary=self.agentlibrary,
                 min_bq=self.min_bq,
                 min_mq=self.min_mq,
