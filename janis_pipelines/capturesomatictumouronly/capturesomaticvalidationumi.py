@@ -68,6 +68,7 @@ class CaptureSomaticValidationUMI(
                 snps_1000gp=self.snps_1000gp,
                 known_indels=self.known_indels,
                 mills_indels=self.mills_indels,
+                gnomad=self.gnomad,
                 intervals=self.intervals,
                 min_vaf=self.min_vaf,
                 min_mq=self.min_mq,
