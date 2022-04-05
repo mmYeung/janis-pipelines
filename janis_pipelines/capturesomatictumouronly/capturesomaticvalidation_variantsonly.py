@@ -9,7 +9,7 @@ from janis_pipelines.capturesomatictumouronly_gatk.capturesomaticvalidationgatk_
 from janis_bioinformatics.tools.variantcallers import (
     VardictGermlineVariantCaller,
     VarscanGermlineCNSVariantCaller,
-    IlluminaSomaticPiscesVariantCallerTumourOnlyTargeted_5_2_10_49,
+    IlluminaSomaticPiscesVariantCallerTumourOnlyTargetedNoPON_5_2_10_49,
 )
 
 from janis_bioinformatics.tools.dawson import GenerateVarscan2HeaderLines
@@ -180,11 +180,10 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
     def add_pisces(self, bam_source):
         self.step(
             "vc_pisces",
-            IlluminaSomaticPiscesVariantCallerTumourOnlyTargeted_5_2_10_49(
+            IlluminaSomaticPiscesVariantCallerTumourOnlyTargetedNoPON_5_2_10_49(
                 bam=bam_source,
                 sample_name=self.sample_name,
                 reference_folder=self.reference_folder,
-                pon=self.panel_of_normals,
                 intervals=self.intervals,
                 ploidy=self.pisces_ploidy,
                 min_bq=self.min_bq,
