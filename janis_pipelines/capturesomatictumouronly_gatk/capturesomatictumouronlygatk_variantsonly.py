@@ -61,7 +61,7 @@ from janis_bioinformatics.tools.common.gatkbasecalbam import (
     GATKBaseRecalBQSRWorkflow_4_1_3,
 )
 from janis_bioinformatics.tools.variantcallers import (
-    GatkSomaticVariantCallerValidationTargeted,
+    GatkSomaticVariantCallerTumorOnlyTargeted,
 )
 from janis_bioinformatics.tools.bcftools import BcfToolsSort_1_9
 
@@ -116,7 +116,7 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
 
         self.step(
             "vc_gatk",
-            GatkSomaticVariantCallerValidationTargeted(
+            GatkSomaticVariantCallerTumorOnlyTargeted(
                 bam=self.bqsr_tumour.out,
                 intervals=self.intervals,
                 reference=self.reference,
