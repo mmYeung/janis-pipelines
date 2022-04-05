@@ -7,12 +7,7 @@ from janis_core import (
 )
 from janis_unix.tools import UncompressArchive
 
-from janis_bioinformatics.data_types import (
-    BamBai,
-    Bed,
-    Vcf,
-    VcfTabix,
-)
+from janis_bioinformatics.data_types import BamBai, Bed, Vcf, VcfTabix
 
 from janis_pipelines.wgs_somatic_gatk.wgssomaticgatk_variantsonly import (
     WGSSomaticGATKVariantsOnly,
@@ -68,16 +63,14 @@ from janis_bioinformatics.tools.common.gatkbasecalbam import (
 from janis_bioinformatics.tools.variantcallers import (
     GatkSomaticVariantCallerValidationTargeted,
 )
-from janis_bioinformatics.tools.bcftools import (
-    BcfToolsSort_1_9,
-)
+from janis_bioinformatics.tools.bcftools import BcfToolsSort_1_9
 
 from janis_bioinformatics.tools.vcftools import VcfToolsvcftools_0_1_16
 
 
 class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
     def id(self):
-        return "CaptureSomaticValdationGATKVariantsOnly"
+        return "CaptureSomaticValidationGATKVariantsOnly"
 
     def friendly_name(self):
         return "Capture Somatic Tumour Only(GATK only) [VARIANTS only]"
