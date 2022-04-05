@@ -90,7 +90,7 @@ class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.add_inputs_for_reference()
 
     def add_inputs_for_configuration(self):
-        self.input("gnomad", VcfTabix(optional=True), doc=INPUT_DOCS["gnomad"])
+        self.input("gnomad", VcfTabix(), doc=INPUT_DOCS["gnomad"])
         self.input(
             "panel_of_normals",
             VcfTabix(optional=True),
