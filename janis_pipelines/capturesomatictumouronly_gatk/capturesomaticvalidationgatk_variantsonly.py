@@ -1,7 +1,6 @@
 from janis_core import (
-    String,
-    Array,
     Boolean,
+    String,
     WorkflowMetadata,
     StringFormatter,
     InputQualityType,
@@ -12,7 +11,6 @@ from janis_bioinformatics.data_types import (
     BamBai,
     Bed,
     Vcf,
-    CompressedVcf,
     VcfTabix,
 )
 
@@ -64,17 +62,14 @@ INPUT_DOCS = {
     },
 }
 
-from janis_bioinformatics.tools.dawson import GenerateChromosomeIntervalsFromBed
-
 from janis_bioinformatics.tools.common.gatkbasecalbam import (
     GATKBaseRecalBQSRWorkflow_4_1_3,
 )
 from janis_bioinformatics.tools.variantcallers import (
-    GatkSomaticVariantCallerTumorOnlyTargeted,
+    GatkSomaticVariantCallerValidationTargeted,
 )
 from janis_bioinformatics.tools.bcftools import (
     BcfToolsSort_1_9,
-    BcfToolsNorm_1_9,
 )
 
 from janis_bioinformatics.tools.vcftools import VcfToolsvcftools_0_1_16
@@ -82,10 +77,10 @@ from janis_bioinformatics.tools.vcftools import VcfToolsvcftools_0_1_16
 
 class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
     def id(self):
-        return "CaptureSomaticValidationGATKVariantsOnly"
+        return "CaptureSomaticValdationGATKVariantsOnly"
 
     def friendly_name(self):
-        return "Capture Somatic Validation(GATK only) [VARIANTS only]"
+        return "Capture Somatic Tumour Only(GATK only) [VARIANTS only]"
 
     def version(self):
         return "1.4.0"
@@ -102,8 +97,13 @@ class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.add_inputs_for_reference()
 
     def add_inputs_for_configuration(self):
-        super().add_inputs_for_configuration()
-        self.input("genotype_germline", Boolean(), default=True)
+        self.input("gnomad", VcfTabix(optional=True), doc=INPUT_DOCS["gnomad"])
+        self.input(
+            "panel_of_normals",
+            VcfTabix(optional=True),
+            doc=INPUT_DOCS["panel_of_normals"],
+        )
+        self.input("genotype_germline", Boolean(optional=True), default=False)
 
     def add_gatk_variantcaller(self, tumour_bam_source):
 
@@ -123,7 +123,7 @@ class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
 
         self.step(
             "vc_gatk",
-            GatkSomaticVariantCallerTumorOnlyTargeted(
+            GatkSomaticVariantCallerValidationTargeted(
                 bam=self.bqsr_tumour.out,
                 intervals=self.intervals,
                 reference=self.reference,
