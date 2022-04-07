@@ -57,7 +57,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.vc_gatk_sort.out,
             output_folder=["variants", "unfiltered"],
             output_name=StringFormatter(
-                "{samplename}.gatk", samplename=self.sample_name
+                "{samplename}_gatk", samplename=self.sample_name
             ),
         )
         self.output(
@@ -65,7 +65,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.vc_gatk.out_bam,
             output_folder=["Bam"],
             output_name=StringFormatter(
-                "{samplename}.gatk", samplename=self.sample_name
+                "{samplename}_gatk", samplename=self.sample_name
             ),
         )
 
@@ -127,7 +127,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.vc_vardict.out,
             output_folder="variants",
             output_name=StringFormatter(
-                "{samplename}.vardict.recode.vcf", samplename=self.sample_name
+                "{samplename}_vardict.recode", samplename=self.sample_name
             ),
         )
         self.output(
@@ -135,7 +135,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.vc_vardict.variants,
             output_folder=["variants", "unfiltered"],
             output_name=StringFormatter(
-                "{samplename}.vardict.vcf", samplename=self.sample_name
+                "{samplename}_vardict", samplename=self.sample_name
             ),
         )
 
@@ -165,7 +165,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.vc_varscan2.out,
             output_folder="variants",
             output_name=StringFormatter(
-                "{samplename}.varscan.recode.vcf", samplename=self.sample_name
+                "{samplename}_varscan.recode", samplename=self.sample_name
             ),
         )
         self.output(
@@ -173,7 +173,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.vc_varscan2.variants,
             output_folder=["variants", "unfiltered"],
             output_name=StringFormatter(
-                "{samplename}.varscan.vcf", samplename=self.sample_name
+                "{samplename}_varscan", samplename=self.sample_name
             ),
         )
 
@@ -201,7 +201,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.vc_pisces.out_bam,
             output_folder="Bam",
             output_name=StringFormatter(
-                "{samplename}.pisces.bam", samplename=self.sample_name
+                "{samplename}_pisces", samplename=self.sample_name
             ),
         )
         self.output(
@@ -209,7 +209,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.vc_pisces.out,
             output_folder="variants",
             output_name=StringFormatter(
-                "{samplename}.pisces.recode.vcf", samplename=self.sample_name
+                "{samplename}_pisces.recode", samplename=self.sample_name
             ),
         )
         self.output(
@@ -217,7 +217,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.vc_pisces.variants,
             output_folder=["variants", "unfiltered"],
             output_name=StringFormatter(
-                "{samplename}.pisces.vcf", samplename=self.sample_name
+                "{samplename}_pisces", samplename=self.sample_name
             ),
         )
 
@@ -268,7 +268,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             source=self.tabixvcf.out,
             output_folder=["variants"],
             output_name=StringFormatter(
-                "{samplename}.combined.vcf", samplename=self.sample_name
+                "{samplename}_combined", samplename=self.sample_name
             ),
             doc="Combined variants from all 4 variant callers",
         )

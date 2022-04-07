@@ -91,7 +91,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.out_variants,
             output_folder=["variants"],
             output_name=StringFormatter(
-                "{samplename}.combined.vcf", samplename=self.sample_name
+                "{samplename}_combined.vcf", samplename=self.sample_name
             ),
         )
 
@@ -100,7 +100,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.out_variants_vardict,
             output_folder=["variants"],
             output_name=StringFormatter(
-                "{samplename}.vardict.recode", samplename=self.sample_name
+                "{samplename}_vardict.recode", samplename=self.sample_name
             ),
         )
         self.output(
@@ -108,7 +108,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.out_variants_varscan2,
             output_folder=["variants"],
             output_name=StringFormatter(
-                "{samplename}.varscan2.recode", samplename=self.sample_name
+                "{samplename}_varscan2.recode", samplename=self.sample_name
             ),
         )
         self.output(
@@ -116,7 +116,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.out_variants_gatk,
             output_folder=["variants"],
             output_name=StringFormatter(
-                "{samplename}.mutect2.recode", samplename=self.sample_name
+                "{samplename}_mutect2.recode", samplename=self.sample_name
             ),
         )
         self.output(
@@ -124,7 +124,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.out_variants_pisces,
             output_folder=["variants"],
             output_name=StringFormatter(
-                "{samplename}.pisces.recode", samplename=self.sample_name
+                "{samplename}_pisces.recode", samplename=self.sample_name
             ),
         )
 
@@ -133,7 +133,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.variants_vardict,
             output_folder=["variants", "raw"],
             output_name=StringFormatter(
-                "{samplename}.vardict", samplename=self.sample_name
+                "{samplename}_vardict", samplename=self.sample_name
             ),
         )
         self.output(
@@ -141,7 +141,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.variants_varscan2,
             output_folder=["variants", "raw"],
             output_name=StringFormatter(
-                "{samplename}.varscan", samplename=self.sample_name
+                "{samplename}_varscan", samplename=self.sample_name
             ),
         )
         self.output(
@@ -149,7 +149,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.variants_gatk,
             output_folder=["variants", "raw"],
             output_name=StringFormatter(
-                "{samplename}.mutect2", samplename=self.sample_name
+                "{samplename}_mutect2", samplename=self.sample_name
             ),
         )
         self.output(
@@ -157,7 +157,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.variants_pisces,
             output_folder=["variants", "raw"],
             output_name=StringFormatter(
-                "{samplename}.pisces", samplename=self.sample_name
+                "{samplename}_pisces", samplename=self.sample_name
             ),
         )
 
@@ -166,7 +166,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.pisces_bam,
             output_folder=["Bam"],
             output_name=StringFormatter(
-                "{samplename}.hygea.stitcher", samplename=self.sample_name
+                "{samplename}_hygea.stitcher", samplename=self.sample_name
             ),
         )
         self.output(
@@ -174,7 +174,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.callers.gatk_bam,
             output_folder=["Bam"],
             output_name=StringFormatter(
-                "{samplename}.gatk", samplename=self.sample_name
+                "{samplename}_gatk", samplename=self.sample_name
             ),
         )
 
@@ -252,7 +252,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.merge_and_mark.out,
             output_folder=["Bam"],
             output_name=StringFormatter(
-                "{samplename}.umarkdups", samplename=self.sample_name
+                "{samplename}_umarkdups", samplename=self.sample_name
             ),
         )
         self.output(
@@ -260,7 +260,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.merge_and_mark.umimetrics,
             output_folder=["stats"],
             output_name=StringFormatter(
-                "{samplename}.umimetrics", samplename=self.sample_name
+                "{samplename}_umimetrics", samplename=self.sample_name
             ),
         )
         self.output(
@@ -268,7 +268,7 @@ class CaptureSomaticTumourOnlyUMI(
             source=self.merge_and_mark.metrics,
             output_folder=["stats"],
             output_name=StringFormatter(
-                "{samplename}.metrics", samplename=self.sample_name
+                "{samplename}_metrics", samplename=self.sample_name
             ),
         )
         self.output(
