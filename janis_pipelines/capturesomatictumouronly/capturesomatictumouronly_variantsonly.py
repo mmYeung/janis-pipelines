@@ -9,8 +9,13 @@ from janis_pipelines.capturesomatictumouronly_gatk.capturesomatictumouronlygatk_
 from janis_bioinformatics.tools.variantcallers import (
     VardictGermlineVariantCaller,
     VarscanGermlineCNSVariantCaller,
-    IlluminaSomaticPiscesVariantCallerTumourOnlyTargeted_5_2_10_49,
 )
+
+from janis_bioinformatics.tools.illumina.pisces import (
+    PiscesVariantCaller_5_2_10_49,
+    PiscesFilterPON,
+)
+from janis_unix.tools import Awk
 
 from janis_bioinformatics.tools.dawson import GenerateVarscan2HeaderLines
 
@@ -20,7 +25,12 @@ from janis_bioinformatics.tools.pmac import (
     GenerateVardictHeaderLines,
 )
 
-from janis_bioinformatics.tools.bcftools import BcfToolsSort_1_9
+from janis_bioinformatics.tools.bcftools import (
+    BcfToolsSort_1_9,
+    BcfToolsNorm_1_9,
+)
+
+from janis_bioinformatics.tools.vcftools import VcfToolsvcftools_0_1_16
 
 from janis_unix.tools import UncompressArchive
 
@@ -179,31 +189,72 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
 
     def add_pisces(self, bam_source):
         self.step(
-            "vc_pisces",
-            IlluminaSomaticPiscesVariantCallerTumourOnlyTargeted_5_2_10_49(
-                bam=bam_source,
-                sample_name=self.sample_name,
-                reference_folder=self.reference_folder,
-                pon=self.panel_of_normals,
-                intervals=self.intervals,
-                ploidy=self.pisces_ploidy,
-                min_bq=self.min_bq,
-                min_mq=self.min_mq,
-                min_vaf=self.min_vaf,
-                vc_min_vq=self.pisces_vc_min_vq,
-                vqr_min_vq=self.pisces_vqr_min_vq,
-                pisces_awk_script=self.pisces_awk_script,
+            "pisces",
+            PiscesVariantCaller_5_2_10_49(
+                inputBam=bam_source,
+                referenceFolder=self.reference_folder,
+                outputDir=".",
+                intervalBedFile=self.intervals,
+                ploidy=self.ploidy,
+                minimumBaseQuality=self.min_bq,
+                minimumMappingQuality=self.min_mq,
+                minimumVariantFrequency=self.min_vaf,
+                minimumCoverage=self.min_dp,
+                noiseLevelForQModel=self.noise_level,
+                minimumVariantFrequencyFilter=self.min_vaf,
+                enableSingleStrandFilter="True",
+                outputSBFiles="True",
+                callMNVs="False",
+                maxMNVLength=1,
+                RMxNFilter="5,9,0.35",
+                variantQualityFilter=self.vc_min_vq,
+                crushVCF="False",
+                gVCF="False",
+                piscesVersion="5.2.10.49",
             ),
         )
 
-        self.output(
-            "pisces_bam",
-            source=self.vc_pisces.out_bam,
-            output_folder="Bam",
-            output_name=StringFormatter(
-                "{samplename}_pisces", samplename=self.sample_name
+        self.step(
+            "filterPON",
+            PiscesFilterPON(
+                ponFile=self.pon,
+                inputVcf=self.pisces,
+                outputVcf=StringFormatter(
+                    "./{samplename}.pisces.filPON.vcf",
+                    samplename=self.sample_name,
+                ),
             ),
         )
+
+        self.step(
+            "fixSource",
+            Awk(script=self.pisces_awk_script, input_files=self.filterPON.out),
+        )
+
+        self.step("sort", BcfToolsSort_1_9(vcf=self.fixSource.out))
+
+        self.step("normalise", BcfToolsNorm_1_9(vcf=self.sort.out))
+
+        self.step("uncompress", UncompressArchive(file=self.normalise.out))
+
+        self.step(
+            "filterpass",
+            VcfToolsvcftools_0_1_16(
+                vcf=self.uncompress.out.as_type(Vcf),
+                removeFileteredAll=True,
+                recode=True,
+                recodeINFOAll=True,
+            ),
+        )
+
+        # self.output(
+        #     "pisces_bam",
+        #     source=self.vc_pisces.out_bam,
+        #     output_folder="Bam",
+        #     output_name=StringFormatter(
+        #         "{samplename}_pisces", samplename=self.sample_name
+        #     ),
+        # )
         self.output(
             "out_variants_pisces",
             source=self.vc_pisces.out,
