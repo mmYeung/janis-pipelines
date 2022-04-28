@@ -11,9 +11,7 @@ from janis_bioinformatics.tools.variantcallers import (
     VarscanGermlineCNSVariantCaller,
     IlluminaSomaticPiscesVariantCallerTumourOnlyTargetedNoPON_5_2_10_49,
 )
-from janis_bioinformatics.tools.illumina import (
-    PiscesVariantCaller_5_2_10_49,
-)
+from janis_bioinformatics.tools.illumina import PiscesVariantCaller_5_2_10_49
 
 from janis_unix.tools import Awk
 
@@ -189,7 +187,7 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
 
     def add_pisces(self, bam_source):
         self.step(
-            "pisces",
+            "vc_pisces",
             PiscesVariantCaller_5_2_10_49(
                 inputBam=bam_source,
                 referenceFolder=self.reference_folder,
@@ -215,18 +213,20 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
         )
 
         self.step(
-            "fixSource",
-            Awk(script=self.pisces_awk_script, input_files=self.filterPON.out),
+            "vc_pisces_fixSource",
+            Awk(script=self.pisces_awk_script, input_files=self.vc_pisces.vcf),
         )
 
-        self.step("sort", BcfToolsSort_1_9(vcf=self.fixSource.out))
+        self.step("vc_pisces_sort", BcfToolsSort_1_9(vcf=self.fixSource.out))
 
-        self.step("normalise", BcfToolsNorm_1_9(vcf=self.sort.out))
-
-        self.step("uncompress", UncompressArchive(file=self.normalise.out))
+        self.step("vc_pisces_normalise", BcfToolsNorm_1_9(vcf=self.sort.out))
 
         self.step(
-            "filterpass",
+            "vc_pisces_uncompress", UncompressArchive(file=self.normalise.out)
+        )
+
+        self.step(
+            "vc_pisces_filterpass",
             VcfToolsvcftools_0_1_16(
                 vcf=self.uncompress.out.as_type(Vcf),
                 removeFileteredAll=True,
@@ -245,7 +245,7 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
         # )
         self.output(
             "out_variants_pisces",
-            source=self.vc_pisces.out,
+            source=self.vc_pisces_filterpass.out,
             output_folder="variants",
             output_name=StringFormatter(
                 "{samplename}_pisces.recode", samplename=self.sample_name
@@ -253,7 +253,7 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
         )
         self.output(
             "variants_pisces",
-            source=self.vc_pisces.variants,
+            source=self.vc_pisces.vcf,
             output_folder=["variants", "unfiltered"],
             output_name=StringFormatter(
                 "{samplename}_pisces", samplename=self.sample_name
@@ -266,7 +266,7 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
             CombineVariants_0_0_8(
                 vcfs=[
                     self.vc_gatk_filterpass.out,
-                    self.vc_pisces.out,
+                    self.vc_pisces_filterpass.out,
                     self.vc_varscan2.out,
                     self.vc_vardict.out,
                 ],
