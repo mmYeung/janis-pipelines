@@ -11,7 +11,7 @@ from janis_bioinformatics.tools.variantcallers import (
     VarscanGermlineCNSVariantCaller,
 )
 
-from janis_bioinformatics.tools.illumina.pisces import (
+from janis_bioinformatics.tools.illumina import (
     PiscesVariantCaller_5_2_10_49,
     PiscesFilterPON,
 )
