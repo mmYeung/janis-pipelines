@@ -195,19 +195,19 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 referenceFolder=self.reference_folder,
                 outputDir=".",
                 intervalBedFile=self.intervals,
-                ploidy=self.ploidy,
+                ploidy=self.pisces_ploidy,
                 minimumBaseQuality=self.min_bq,
                 minimumMappingQuality=self.min_mq,
                 minimumVariantFrequency=self.min_vaf,
                 minimumCoverage=self.min_dp,
-                noiseLevelForQModel=self.noise_level,
+                noiseLevelForQModel=self.pisces_noise_level,
                 minimumVariantFrequencyFilter=self.min_vaf,
                 enableSingleStrandFilter="True",
                 outputSBFiles="True",
                 callMNVs="False",
                 maxMNVLength=1,
                 RMxNFilter="5,9,0.35",
-                variantQualityFilter=self.vc_min_vq,
+                variantQualityFilter=self.pisces_vc_min_vq,
                 crushVCF="False",
                 gVCF="False",
                 piscesVersion="5.2.10.49",
@@ -228,21 +228,29 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
 
         self.step(
             "vc_pisces_fixSource",
-            Awk(script=self.pisces_awk_script, input_files=self.filterPON.out),
+            Awk(
+                script=self.pisces_awk_script,
+                input_files=self.vc_pisces_filterPON.out,
+            ),
         )
 
-        self.step("vc_pisces_sort", BcfToolsSort_1_9(vcf=self.fixSource.out))
-
-        self.step("vc_pisces_normalise", BcfToolsNorm_1_9(vcf=self.sort.out))
+        self.step(
+            "vc_pisces_sort", BcfToolsSort_1_9(vcf=self.vc_pisces_fixSource.out)
+        )
 
         self.step(
-            "vc_pisces_uncompress", UncompressArchive(file=self.normalise.out)
+            "vc_pisces_normalise", BcfToolsNorm_1_9(vcf=self.vc_pisces_sort.out)
+        )
+
+        self.step(
+            "vc_pisces_uncompress",
+            UncompressArchive(file=self.vc_pisces_normalise.out),
         )
 
         self.step(
             "vc_pisces_filterpass",
             VcfToolsvcftools_0_1_16(
-                vcf=self.uncompress.out.as_type(Vcf),
+                vcf=self.vc_pisces_uncompress.out.as_type(Vcf),
                 removeFileteredAll=True,
                 recode=True,
                 recodeINFOAll=True,
