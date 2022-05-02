@@ -93,7 +93,7 @@ class CaptureSomaticsTumourOnlyVariantsOnlyMultiSample(BioinformaticsWorkflow):
                 pisces_awk_script=self.pisces_awk_script,
             ),
             scatter=ScatterDescription(
-                ["bams", "sample_name"],
+                ["bam", "sample_name"],
                 method=ScatterMethod.dot,
                 labels=self.sample_name,
             ),
