@@ -13,6 +13,10 @@ from janis_pipelines.wgs_somatic_gatk.wgssomaticgatk_variantsonly import (
     WGSSomaticGATKVariantsOnly,
 )
 
+from janis_bioinformatics.tools.variantcallers import (
+    GatkSomaticVariantCallerValidationTargeted,
+)
+
 from janis_pipelines.reference import WGS_INPUTS
 
 INPUT_DOCS = {
@@ -116,7 +120,7 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
 
         self.step(
             "vc_gatk",
-            CaptureSomaticValidationGATKVariantsOnly(
+            GatkSomaticVariantCallerValidationTargeted(
                 bam=self.bqsr_tumour.out,
                 intervals=self.intervals,
                 reference=self.reference,
