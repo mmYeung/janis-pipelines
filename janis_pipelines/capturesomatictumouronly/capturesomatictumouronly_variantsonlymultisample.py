@@ -70,7 +70,6 @@ class CaptureSomaticsTumourOnlyVariantsOnlyMultiSample(BioinformaticsWorkflow):
                 sample_name=self.sample_name,
                 intervals=self.intervals,
                 reference=self.reference,
-                reference_alt=self.reference_alt,
                 reference_folder=self.reference_folder,
                 known_indels=self.known_indels,
                 mills_indels=self.mills_indels,
