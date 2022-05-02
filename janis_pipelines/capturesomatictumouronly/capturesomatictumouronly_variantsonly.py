@@ -217,7 +217,7 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
         self.step(
             "vc_pisces_filterPON",
             PiscesFilterPON(
-                ponFile=self.pon,
+                ponFile=self.panel_of_normals,
                 inputVcf=self.vc_pisces.vcf,
                 outputVcf=StringFormatter(
                     "./{samplename}.pisces.filPON.vcf",
