@@ -76,7 +76,6 @@ class CaptureSomaticValidationVariantsOnlyMultiSample(BioinformaticsWorkflow):
                 snps_1000gp=self.snps_1000gp,
                 snps_dbsnp=self.snps_dbsnp,
                 gnomad=self.gnomad,
-                agentlibrary=self.agentlibrary,
                 min_bq=self.min_bq,
                 min_mq=self.min_mq,
                 min_ad=self.min_ad,

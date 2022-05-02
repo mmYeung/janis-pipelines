@@ -78,7 +78,6 @@ class CaptureSomaticsTumourOnlyVariantsOnlyMultiSample(BioinformaticsWorkflow):
                 snps_dbsnp=self.snps_dbsnp,
                 gnomad=self.gnomad,
                 panel_of_normals=self.panel_of_normals,
-                agentlibrary=self.agentlibrary,
                 min_bq=self.min_bq,
                 min_mq=self.min_mq,
                 min_ad=self.min_ad,
