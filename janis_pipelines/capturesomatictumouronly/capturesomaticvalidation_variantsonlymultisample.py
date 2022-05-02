@@ -91,7 +91,7 @@ class CaptureSomaticValidationVariantsOnlyMultiSample(BioinformaticsWorkflow):
                 pisces_awk_script=self.pisces_awk_script,
             ),
             scatter=ScatterDescription(
-                ["bam", "sample_name"],
+                ["bams", "sample_name"],
                 method=ScatterMethod.dot,
                 labels=self.sample_name,
             ),
