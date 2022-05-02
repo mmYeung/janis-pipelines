@@ -65,7 +65,7 @@ class CaptureSomaticValidationVariantsOnlyMultiSample(BioinformaticsWorkflow):
         self.step(
             "capture_variantcalling",
             CaptureSomaticValidationMultiCallersVariantsOnly(
-                bam=self.bam,
+                bam=self.bams,
                 sample_name=self.sample_name,
                 intervals=self.intervals,
                 reference=self.reference,
@@ -91,7 +91,7 @@ class CaptureSomaticValidationVariantsOnlyMultiSample(BioinformaticsWorkflow):
                 pisces_awk_script=self.pisces_awk_script,
             ),
             scatter=ScatterDescription(
-                ["reads", "sample_name"],
+                ["bam", "sample_name"],
                 method=ScatterMethod.dot,
                 labels=self.sample_name,
             ),

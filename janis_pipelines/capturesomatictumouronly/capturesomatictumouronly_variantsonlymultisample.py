@@ -31,7 +31,7 @@ class CaptureSomaticsTumourOnlyVariantsOnlyMultiSample(BioinformaticsWorkflow):
 
     def constructor(self):
         ##Inputs
-        self.input("bam", Array(BamBai()))
+        self.input("bams", Array(BamBai()))
         self.input("sample_name", Array(String()))
         ## Intervals
         self.input("intervals", Bed())
@@ -66,7 +66,7 @@ class CaptureSomaticsTumourOnlyVariantsOnlyMultiSample(BioinformaticsWorkflow):
         self.step(
             "capture_variantcalling",
             CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
-                bam=self.bam,
+                bam=self.bams,
                 sample_name=self.sample_name,
                 intervals=self.intervals,
                 reference=self.reference,
@@ -93,7 +93,7 @@ class CaptureSomaticsTumourOnlyVariantsOnlyMultiSample(BioinformaticsWorkflow):
                 pisces_awk_script=self.pisces_awk_script,
             ),
             scatter=ScatterDescription(
-                ["reads", "sample_name"],
+                ["bams", "sample_name"],
                 method=ScatterMethod.dot,
                 labels=self.sample_name,
             ),
