@@ -31,7 +31,7 @@ class CaptureSomaticValidationVariantsOnlyMultiSample(BioinformaticsWorkflow):
 
     def constructor(self):
         ##Inputs
-        self.input("bam", Array(BamBai()))
+        self.input("bams", Array(BamBai()))
         self.input("sample_name", Array(String()))
         ## Intervals
         self.input("intervals", Bed())
