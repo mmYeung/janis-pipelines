@@ -92,9 +92,7 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
     def add_inputs_for_configuration(self):
         self.input("gnomad", VcfTabix(optional=True), doc=INPUT_DOCS["gnomad"])
         self.input(
-            "panel_of_normals",
-            VcfTabix(optional=True),
-            doc=INPUT_DOCS["panel_of_normals"],
+            "panel_of_normals", VcfTabix(), doc=INPUT_DOCS["panel_of_normals"]
         )
 
     def add_gatk_variantcaller(self, tumour_bam_source):
