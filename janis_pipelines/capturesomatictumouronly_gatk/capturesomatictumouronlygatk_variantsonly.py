@@ -96,7 +96,6 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
             VcfTabix(optional=True),
             doc=INPUT_DOCS["panel_of_normals"],
         )
-        self.input("genotype_germline", Boolean(optional=True), default=False)
 
     def add_gatk_variantcaller(self, tumour_bam_source):
 
@@ -122,7 +121,6 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
                 reference=self.reference,
                 gnomad=self.gnomad,
                 panel_of_normals=self.panel_of_normals,
-                genotype_germline=self.genotype_germline,
                 gatk_bam_str="mutect2.bam",
             ),
         )
