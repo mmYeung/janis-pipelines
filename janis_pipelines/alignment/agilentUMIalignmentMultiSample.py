@@ -3,7 +3,7 @@ from janis_core import String, Array, File, ScatterDescription, ScatterMethod
 
 from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 
-from janis_pipelines.alignment import AgilentUMIalingment
+from janis_pipelines.alignment import AgilentUMIalignment
 
 
 class AgilentUMIalignmentMultiSample(BioinformaticsWorkflow):
@@ -32,7 +32,7 @@ class AgilentUMIalignmentMultiSample(BioinformaticsWorkflow):
         ## STEPS
         self.step(
             "alignment_workflow",
-            AgilentUMIalingment(
+            AgilentUMIalignment(
                 reads=self.reads,
                 sample_name=self.sample_name,
                 reference=self.reference,
