@@ -3,7 +3,7 @@ from janis_core import String, Array, File, ScatterDescription, ScatterMethod
 
 from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 
-from janis_pipelines.alignment import AgilentUMIalignment
+from janis_pipelines.alignment.agilentUMIalignment import AgilentUMIalignment
 
 
 class AgilentUMIalignmentMultiSample(BioinformaticsWorkflow):
