@@ -8,7 +8,7 @@ from janis_pipelines.alignment.agilentUMIalignment import AgilentUMIalignment
 
 class AgilentUMIalignmentMultiSample(BioinformaticsWorkflow):
     def id(self):
-        return "5"
+        return "AgilentUMIalignmentMultiSample"
 
     def friendly_name(self):
         return "Preprocessing of Agilent UMI data from FASTQ to UMI duplicate marked bam for multiple samples"
