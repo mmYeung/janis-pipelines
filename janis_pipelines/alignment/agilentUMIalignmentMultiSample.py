@@ -36,7 +36,7 @@ class AgilentUMIalignmentMultiSample(BioinformaticsWorkflow):
                 reads=self.reads,
                 sample_name=self.sample_name,
                 reference=self.reference,
-                reference_alt=self.referenceAlt,
+                reference_alt=self.reference_alt,
                 agentlibrary=self.agentlibrary,
                 cutadapt_adapters=self.cutadapt_adapters,
             ),

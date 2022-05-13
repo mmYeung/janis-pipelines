@@ -90,7 +90,7 @@ class AgilentUMIalignment(BioinformaticsWorkflow):
 
         sub_inputs = {
             "reference": self.reference,
-            "reference_alt": self.referenceAlt,
+            "reference_alt": self.reference_alt,
             "cutadapt_adapter": self.getfastqc_adapters,
             "cutadapt_removeMiddle3Adapter": self.getfastqc_adapters,
         }

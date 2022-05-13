@@ -68,7 +68,7 @@ class CaptureSomaticTumourOnly(
 
         sub_inputs = {
             "reference": self.reference,
-            "referenceAlt": self.reference_alt,
+            "reference_alt": self.reference_alt,
             "cutadapt_adapter": self.getfastqc_adapters,
             "cutadapt_removeMiddle3Adapter": self.getfastqc_adapters,
         }
