@@ -8,7 +8,7 @@ from janis_pipelines.alignment.agilentUMIalignment import AgilentUMIalignment
 
 class AgilentUMIalignmentMultiSample(BioinformaticsWorkflow):
     def id(self):
-        return "AgilentUMIalignmentMultiSample"
+        return "5"
 
     def friendly_name(self):
         return "Preprocessing of Agilent UMI data from FASTQ to UMI duplicate marked bam for multiple samples"
@@ -22,7 +22,7 @@ class AgilentUMIalignmentMultiSample(BioinformaticsWorkflow):
 
         self.input("reference", FastaWithDict())
 
-        self.input("referenceAlt", File())
+        self.input("reference_alt", File())
 
         # For Agent Trimmer
         self.input("agentlibrary", String())
@@ -36,7 +36,7 @@ class AgilentUMIalignmentMultiSample(BioinformaticsWorkflow):
                 reads=self.reads,
                 sample_name=self.sample_name,
                 reference=self.reference,
-                referenceAlt=self.referenceAlt,
+                reference_alt=self.referenceAlt,
                 agentlibrary=self.agentlibrary,
                 cutadapt_adapters=self.cutadapt_adapters,
             ),

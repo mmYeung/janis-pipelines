@@ -56,7 +56,7 @@ class AgilentUMIalignment(BioinformaticsWorkflow):
 
         self.input("reference", FastaWithDict)
 
-        self.input("referenceAlt", File())
+        self.input("reference_alt", File())
 
         # For Agent Trimmer
         self.input("agentlibrary", String())
@@ -90,7 +90,7 @@ class AgilentUMIalignment(BioinformaticsWorkflow):
 
         sub_inputs = {
             "reference": self.reference,
-            "referenceAlt": self.referenceAlt,
+            "reference_alt": self.referenceAlt,
             "cutadapt_adapter": self.getfastqc_adapters,
             "cutadapt_removeMiddle3Adapter": self.getfastqc_adapters,
         }
