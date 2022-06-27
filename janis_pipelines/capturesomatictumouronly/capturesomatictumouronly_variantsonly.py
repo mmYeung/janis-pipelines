@@ -26,6 +26,11 @@ from janis_unix.tools import UncompressArchive
 
 from janis_bioinformatics.tools.htslib import BGZipLatest, TabixLatest
 
+from janis_bioinformatics.tools.samtools import (
+    SamToolsCramView_1_9,
+    SamToolsIndexCram_1_9,
+)
+
 
 class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
     CaptureSomaticTumourOnlyGATKVariantsOnly
@@ -43,6 +48,20 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
         self.add_inputs()
 
         self.add_gatk_variantcaller(tumour_bam_source=self.bam)
+
+        self.step(
+            "gatk_to_cram",
+            SamToolsCramView_1_9(
+                sam=self.vc_gatk.out_bam,
+                reference=self.reference,
+                cramOutput=True,
+            ),
+        )
+
+        self.step(
+            "gatk_cram_index", SamToolsIndexCram_1_9(bam=self.gatk_to_cram.out)
+        )
+
         ## Adding outputs from GATK for easier referencing in following pipelines
         self.output(
             "out_variants_gatk",
@@ -61,9 +80,9 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             ),
         )
         self.output(
-            "gatk_bam",
-            source=self.vc_gatk.out_bam,
-            output_folder=["Bam"],
+            "gatk_cram",
+            source=self.gatk_cram_index.out,
+            output_folder=["Cram"],
             output_name=StringFormatter(
                 "{samplename}_gatk", samplename=self.sample_name
             ),
@@ -196,10 +215,23 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
             ),
         )
 
+        self.step(
+            "pisces_to_cram",
+            SamToolsCramView_1_9(
+                sam=self.vc_pisces.out_bam,
+                reference=self.reference,
+                cramOutput=True,
+            ),
+        )
+        self.step(
+            "pisces_cram_index",
+            SamToolsIndexCram_1_9(bam=self.pisces_to_cram.out),
+        )
+
         self.output(
-            "pisces_bam",
-            source=self.vc_pisces.out_bam,
-            output_folder="Bam",
+            "pisces_cram",
+            source=self.pisces_cram_index.out,
+            output_folder="Cram",
             output_name=StringFormatter(
                 "{samplename}_pisces", samplename=self.sample_name
             ),
