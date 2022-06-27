@@ -4,15 +4,7 @@ from janis_core import String, Array, File, WorkflowBuilder, StringFormatter
 
 from janis_bioinformatics.data_types import FastqGzPair, FastaWithDict
 
-from janis_bioinformatics.tools.agent import AgentTrimmer_2_0_2
-
-from janis_bioinformatics.tools.babrahambioinformatics import FastQC_0_11_8
-
-from janis_bioinformatics.tools.pmac import ParseFastqcAdaptors
-
-from janis_bioinformatics.tools.bwakit import BwaPostAltAlignerUMI
-
-from janis_bioinformatics.tools.common import MergeAndMarkBamsUMI_4_1_2
+from janis_pipelines.alignment.agilentUMIalignment import AgilentUMIalignment
 
 from janis_pipelines.capturesomatictumouronly.capturesomatictumouronly_variantsonly import (
     CaptureSomaticTumourOnlyMultiCallersVariantsOnly,
@@ -35,32 +27,21 @@ class CaptureSomaticTumourOnlyUMI(
         self.add_inputs()
 
         self.step(
-            "agenttrim",
-            self.umi_trimmer_subworkflow(
-                fastq_pair=self.reads, agentlibrary=self.agentlibrary
+            "preprocessing",
+            AgilentUMIalignment(
+                reads=self.reads,
+                sample_name=self.sample_name,
+                reference=self.reference,
+                reference_alt=self.reference_alt,
+                agentlibrary=self.agentlibrary,
+                cutadapt_adapters=self.cutadapt_adapters,
             ),
-            scatter=["fastq_pair"],
         )
-
-        self.step(
-            "fastqc", FastQC_0_11_8(reads=self.agenttrim.out), scatter="reads"
-        )
-
-        self.step(
-            "getfastqc_adapters",
-            ParseFastqcAdaptors(
-                fastqc_datafiles=self.fastqc.datafile,
-                cutadapt_adaptors_lookup=self.cutadapt_adapters,
-            ),
-            scatter="fastqc_datafiles",
-        )
-
-        self.add_preprocessing()
 
         self.step(
             "callers",
             CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
-                bam=self.merge_and_mark.out,
+                bam=self.preprocessing.out_bam,
                 sample_name=self.sample_name,
                 reference=self.reference,
                 reference_folder=self.reference_folder,
@@ -86,6 +67,39 @@ class CaptureSomaticTumourOnlyUMI(
         )
 
         ## Outputs
+        self.output(
+            "umarkdups_cram",
+            source=self.preprocessing.out_cram,
+            output_folder=["Cram"],
+            output_name=StringFormatter(
+                "{samplename}_umarkdups", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "umimetrics",
+            source=self.preprocessing.umimetrics,
+            output_folder=["stats"],
+            output_name=StringFormatter(
+                "{samplename}_umimetrics", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "metrics",
+            source=self.preprocessing.metrics,
+            output_folder=["stats"],
+            output_name=StringFormatter(
+                "{samplename}_metrics", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "out_fastqc_reports",
+            source=self.preprocessing.out_fastqc_reports,
+            output_folder=["QC"],
+            output_name=StringFormatter(
+                "{samplename}_fastqc_report", samplename=self.sample_name
+            ),
+        )
+
         self.output(
             "combined",
             source=self.callers.out_variants,
@@ -162,17 +176,17 @@ class CaptureSomaticTumourOnlyUMI(
         )
 
         self.output(
-            "pisces_bam",
-            source=self.callers.pisces_bam,
-            output_folder=["Bam"],
+            "pisces_cram",
+            source=self.callers.pisces_cram,
+            output_folder=["Cram"],
             output_name=StringFormatter(
                 "{samplename}_hygea.stitcher", samplename=self.sample_name
             ),
         )
         self.output(
-            "gatk_bam",
-            source=self.callers.gatk_bam,
-            output_folder=["Bam"],
+            "gatk_cram",
+            source=self.callers.gatk_cram,
+            output_folder=["Cram"],
             output_name=StringFormatter(
                 "{samplename}_gatk", samplename=self.sample_name
             ),
@@ -190,93 +204,4 @@ class CaptureSomaticTumourOnlyUMI(
         self.add_inputs_for_configuration()
         self.add_inputs_for_intervals()
         self.add_inputs_for_vc()
-
-    @staticmethod
-    def umi_trimmer_subworkflow(**connections):
-        w = WorkflowBuilder("umi_trimmer_subworkflow")
-
-        ## Inputs
-        w.input("fastq_pair", FastqGzPair())
-        w.input("agentlibrary", String())
-
-        w.step(
-            "agenttrimsub",
-            AgentTrimmer_2_0_2(
-                read1=w.fastq_pair[0],
-                read2=w.fastq_pair[1],
-                outdir=".",
-                library=w.agentlibrary,
-                agentVersion="2.0.2",
-            ),
-        )
-
-        w.output("out", source=w.agenttrimsub.out)
-
-        return w(**connections)
-
-    def add_preprocessing(self):
-
-        sub_inputs = {
-            "reference": self.reference,
-            "reference_alt": self.reference_alt,
-            "cutadapt_adapter": self.getfastqc_adapters,
-            "cutadapt_removeMiddle3Adapter": self.getfastqc_adapters,
-        }
-
-        ## STEPS
-        self.step(
-            "alignUMI",
-            BwaPostAltAlignerUMI(
-                fastq=self.agenttrim.out,
-                sample_name=self.sample_name,
-                addumis=True,
-                **sub_inputs,
-            ),
-            scatter=[
-                "fastq",
-                "cutadapt_adapter",
-                "cutadapt_removeMiddle3Adapter",
-            ],
-        )
-
-        self.step(
-            "merge_and_mark",
-            MergeAndMarkBamsUMI_4_1_2(
-                bams=self.alignUMI.out, sample_name=self.sample_name
-            ),
-        )
-
-        ## OUTPUTS
-        self.output(
-            "out_bam",
-            source=self.merge_and_mark.out,
-            output_folder=["Bam"],
-            output_name=StringFormatter(
-                "{samplename}_umarkdups", samplename=self.sample_name
-            ),
-        )
-        self.output(
-            "umimetrics",
-            source=self.merge_and_mark.umimetrics,
-            output_folder=["stats"],
-            output_name=StringFormatter(
-                "{samplename}_umimetrics", samplename=self.sample_name
-            ),
-        )
-        self.output(
-            "metrics",
-            source=self.merge_and_mark.metrics,
-            output_folder=["stats"],
-            output_name=StringFormatter(
-                "{samplename}_metrics", samplename=self.sample_name
-            ),
-        )
-        self.output(
-            "out_fastqc_reports",
-            source=self.fastqc.out,
-            output_folder=["QC"],
-            output_name=StringFormatter(
-                "{samplename}_fastqc_report", samplename=self.sample_name
-            ),
-        )
 
