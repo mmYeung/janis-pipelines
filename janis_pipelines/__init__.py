@@ -61,6 +61,10 @@ from janis_pipelines.capturesomatictumouronly.capturesomaticvalidationumimulitsa
     CaptureSomaticValidationUMIMultiSample,
 )
 
+from janis_pipelines.capturesomatictumouronly.capturesomaticvalidation_variantsonlymultisample import (
+    CaptureSomaticValidationUMIMultiSampleVariantOnly,
+)
+
 from janis_pipelines.alignment.agilentUMIalignment import AgilentUMIalignment
 
 from janis_pipelines.alignment.agilentUMIalignmentMultiSample import (
