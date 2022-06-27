@@ -169,7 +169,7 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
             source=self.vc_gatk.out_bam,
             output_folder=["Bam"],
             output_name=StringFormatter(
-                "{samplename}.gatk.bam", samplename=self.sample_name
+                "{samplename}.gatk", samplename=self.sample_name
             ),
         )
 
