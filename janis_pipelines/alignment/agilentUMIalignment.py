@@ -13,6 +13,11 @@ from janis_bioinformatics.tools.bwakit import BwaPostAltAlignerUMI
 
 from janis_bioinformatics.tools.common import MergeAndMarkBamsUMI_4_1_2
 
+from janis_bioinformatics.tools.samtools import (
+    SamToolsCramView_1_9,
+    SamToolsIndexCram_1_9,
+)
+
 
 class AgilentUMIalignment(BioinformaticsWorkflow):
     def id(self):
@@ -118,11 +123,32 @@ class AgilentUMIalignment(BioinformaticsWorkflow):
             ),
         )
 
+        self.step(
+            "umarkdups_to_cram",
+            SamToolsCramView_1_9(
+                sam=self.merge_and_mark.out,
+                reference=self.reference,
+                cramOutput=True,
+            ),
+        )
+        self.step(
+            "umarkdups_cram_index",
+            SamToolsIndexCram_1_9(bam=self.umarkdups_to_cram.out),
+        )
+
         ## OUTPUTS
         self.output(
             "out_bam",
             source=self.merge_and_mark.out,
             output_folder=["Bam"],
+            output_name=StringFormatter(
+                "{samplename}.umarkdups", samplename=self.sample_name
+            ),
+        )
+        self.output(
+            "out_cram",
+            source=self.umarkdups_cram_index.out,
+            output_folder=["Cram"],
             output_name=StringFormatter(
                 "{samplename}.umarkdups", samplename=self.sample_name
             ),
