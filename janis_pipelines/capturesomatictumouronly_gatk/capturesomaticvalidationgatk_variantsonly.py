@@ -168,7 +168,7 @@ class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
             source=self.vc_gatk_filterpass.out,
             output_folder=["variants"],
             output_name=StringFormatter(
-                "{samplename}.gatk.recode.vcf", samplename=self.sample_name
+                "{samplename}.gatk.recode", samplename=self.sample_name
             ),
         )
 
@@ -177,7 +177,7 @@ class CaptureSomaticValidationGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
             source=self.vc_gatk.out_bam,
             output_folder=["Bam"],
             output_name=StringFormatter(
-                "{samplename}.gatk.bam", samplename=self.sample_name
+                "{samplename}.gatk", samplename=self.sample_name
             ),
         )
 
