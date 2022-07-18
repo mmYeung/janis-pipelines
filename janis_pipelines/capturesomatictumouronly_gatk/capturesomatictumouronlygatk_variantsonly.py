@@ -85,10 +85,6 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
         self.input("bam", BamBai())
         self.input("sample_name", String())
 
-        ## Variant Caller Options
-        self.input("genotype_germline", Boolean(optional=True))
-        self.input("genotype_pon_sites", Boolean(optional=True))
-
         self.add_inputs_for_configuration()
         self.add_inputs_for_intervals()
         self.add_inputs_for_reference()
@@ -123,8 +119,6 @@ class CaptureSomaticTumourOnlyGATKVariantsOnly(WGSSomaticGATKVariantsOnly):
                 reference=self.reference,
                 gnomad=self.gnomad,
                 panel_of_normals=self.panel_of_normals,
-                genotype_germline=self.genotype_germline,
-                genotype_pon_sites=self.genotype_pon_sites,
                 gatk_bam_str="mutect2.bam",
             ),
         )
