@@ -49,18 +49,18 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
 
         self.add_gatk_variantcaller(tumour_bam_source=self.bam)
 
-        self.step(
-            "gatk_to_cram",
-            SamToolsCramView_1_9(
-                sam=self.vc_gatk.out_bam,
-                reference=self.reference,
-                cramOutput=True,
-            ),
-        )
+        # self.step(
+        #     "gatk_to_cram",
+        #     SamToolsCramView_1_9(
+        #         sam=self.vc_gatk.out_bam,
+        #         reference=self.reference,
+        #         cramOutput=True,
+        #     ),
+        # )
 
-        self.step(
-            "gatk_cram_index", SamToolsIndexCram_1_9(bam=self.gatk_to_cram.out)
-        )
+        # self.step(
+        #     "gatk_cram_index", SamToolsIndexCram_1_9(bam=self.gatk_to_cram.out)
+        # )
 
         ## Adding outputs from GATK for easier referencing in following pipelines
         self.output(
@@ -79,10 +79,18 @@ class CaptureSomaticTumourOnlyMultiCallersVariantsOnly(
                 "{samplename}_gatk", samplename=self.sample_name
             ),
         )
+        # self.output(
+        #     "gatk_cram",
+        #     source=self.gatk_cram_index.out,
+        #     output_folder=["Cram"],
+        #     output_name=StringFormatter(
+        #         "{samplename}_gatk", samplename=self.sample_name
+        #     ),
+        # )
         self.output(
-            "gatk_cram",
-            source=self.gatk_cram_index.out,
-            output_folder=["Cram"],
+            "gatk_bam",
+            source=self.vc_gatk.out_bam,
+            output_folder=["Bam"],
             output_name=StringFormatter(
                 "{samplename}_gatk", samplename=self.sample_name
             ),
