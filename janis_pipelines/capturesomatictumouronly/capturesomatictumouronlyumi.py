@@ -183,9 +183,17 @@ class CaptureSomaticTumourOnlyUMI(
                 "{samplename}_hygea.stitcher", samplename=self.sample_name
             ),
         )
+        # self.output(
+        #     "gatk_cram",
+        #     source=self.callers.gatk_cram,
+        #     output_folder=["Cram"],
+        #     output_name=StringFormatter(
+        #         "{samplename}_gatk", samplename=self.sample_name
+        #     ),
+        # )
         self.output(
-            "gatk_cram",
-            source=self.callers.gatk_cram,
+            "gatk_bam",
+            source=self.callers.gatk_bam,
             output_folder=["Cram"],
             output_name=StringFormatter(
                 "{samplename}_gatk", samplename=self.sample_name
