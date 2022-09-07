@@ -79,7 +79,7 @@ class CaptureSomaticValidationMultiCallersVariantsOnly(
         )
         self.output(
             "gatk_bam",
-            source=self.gatk_cram_index.out,
+            source=self.vc_gatk.out,
             output_folder=["Cram"],
             output_name=StringFormatter(
                 "{samplename}_gatk", samplename=self.sample_name
